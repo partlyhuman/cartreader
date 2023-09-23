@@ -1,0 +1,4 @@
+﻿Designator,Footprint,Quantity,Value,LCSC Part #
+J1,PinSocket_1x38_P2.54mm_Vertical,1,CART SLOT TOP ROW,
+J2,PinSocket_1x36_P2.54mm_Vertical,1,CART SLOT BOTTOM ROW,
+J5,Loopy_Makeshift_9x5_P2.0mm_SpringContacts_Array_CARTBACK,1,Loopy_Cart_Side,
