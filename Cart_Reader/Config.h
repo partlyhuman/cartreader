@@ -29,7 +29,7 @@
     Choose your hardware version:
 */
 
-//#define HW5
+#define HW5
 //#define HW4
 //#define HW3
 //#define HW2
@@ -198,7 +198,7 @@
 /* [ Sega Master System/Mark III/Game Gear/SG-1000 ---------------- ]
 */
 
-#define enable_SMS
+//#define enable_SMS
 
 /****/
 
@@ -275,7 +275,7 @@
 /* [ Casio Loopy -------------------------------------------------- ]
 */
 
-//#define enable_LOOPY
+#define enable_LOOPY
 
 /****/
 
@@ -288,7 +288,7 @@
       Green, Red, Blue
 */
 
-#define background_color 100, 0, 0
+#define background_color 20, 100, 40
 
 /****/
 
@@ -311,7 +311,7 @@
     other than HW5 and HW3.
 */
 
-#define ENABLE_UPDATER
+//#define ENABLE_UPDATER
 
 /****/
 
