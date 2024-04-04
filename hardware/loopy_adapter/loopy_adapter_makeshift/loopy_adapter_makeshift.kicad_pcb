@@ -4814,16 +4814,16 @@
 	)
 	(dimension
 		(type aligned)
-		(layer "Edge.Cuts")
-		(uuid "f0e87a7c-83ee-4498-a689-1c67a2a1bef2")
+		(layer "F.Fab")
+		(uuid "9c9bcf3c-9646-485a-a157-1bb70a6cb0ae")
 		(pts
 			(xy 99.48 72.33) (xy 199.98 72.33)
 		)
-		(height -10)
+		(height -9)
 		(gr_text "100.5000 mm"
-			(at 149.73 61.18 0)
-			(layer "Edge.Cuts")
-			(uuid "f0e87a7c-83ee-4498-a689-1c67a2a1bef2")
+			(at 149.73 62.18 0)
+			(layer "F.Fab")
+			(uuid "9c9bcf3c-9646-485a-a157-1bb70a6cb0ae")
 			(effects
 				(font
 					(size 1 1)
