@@ -3905,7 +3905,7 @@
 		)
 		(uuid "fcc68f38-f3a2-457d-821e-7b6d08b33464")
 	)
-	(label "H3"
+	(label "L3"
 		(at 146.05 49.53 0)
 		(fields_autoplaced yes)
 		(effects
