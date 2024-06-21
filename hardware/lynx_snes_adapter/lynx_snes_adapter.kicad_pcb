@@ -53,7 +53,7 @@
 			)
 			(layer "F.Mask"
 				(type "Top Solder Mask")
-				(color "Black")
+				(color "#808080D4")
 				(thickness 0.01)
 			)
 			(layer "F.Cu"
