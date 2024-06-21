@@ -2314,7 +2314,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 129.54) (xy 137.16 129.54)
+			(xy 127 129.54) (xy 138.43 129.54)
 		)
 		(stroke
 			(width 0)
@@ -2364,7 +2364,7 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 124.46) (xy 127 124.46)
+			(xy 138.43 124.46) (xy 127 124.46)
 		)
 		(stroke
 			(width 0)
@@ -2611,6 +2611,16 @@
 			(type default)
 		)
 		(uuid "73c17cd4-160c-44fe-af46-fc9f0e742a4d")
+	)
+	(wire
+		(pts
+			(xy 138.43 48.26) (xy 127 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "76f0fe2f-4280-4e49-8ed7-6f37970d3f1c")
 	)
 	(wire
 		(pts
@@ -2924,7 +2934,7 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 132.08) (xy 127 132.08)
+			(xy 138.43 132.08) (xy 127 132.08)
 		)
 		(stroke
 			(width 0)
@@ -3833,7 +3843,7 @@
 		)
 		(uuid "f1e07179-0468-4505-b113-002a2255d133")
 	)
-	(label "H4"
+	(label "H5"
 		(at 134.62 114.3 0)
 		(fields_autoplaced yes)
 		(effects
@@ -4001,7 +4011,7 @@
 	)
 	(symbol
 		(lib_id "power:VCC")
-		(at 137.16 132.08 270)
+		(at 138.43 132.08 270)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4010,7 +4020,7 @@
 		(dnp no)
 		(uuid "356a9a85-c3fb-4e81-b799-5dd426ec7a14")
 		(property "Reference" "#PWR05"
-			(at 133.35 132.08 0)
+			(at 134.62 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4019,7 +4029,7 @@
 			)
 		)
 		(property "Value" "VCC"
-			(at 140.462 132.08 90)
+			(at 141.732 132.08 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4028,7 +4038,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 137.16 132.08 0)
+			(at 138.43 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4037,7 +4047,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 137.16 132.08 0)
+			(at 138.43 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4046,7 +4056,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 137.16 132.08 0)
+			(at 138.43 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4583,7 +4593,7 @@
 	)
 	(symbol
 		(lib_id "power:VCC")
-		(at 137.16 129.54 270)
+		(at 138.43 129.54 270)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4592,7 +4602,7 @@
 		(dnp no)
 		(uuid "7a705179-df3f-47b4-ac59-85e8162f5e69")
 		(property "Reference" "#PWR06"
-			(at 133.35 129.54 0)
+			(at 134.62 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4601,7 +4611,7 @@
 			)
 		)
 		(property "Value" "VCC"
-			(at 140.462 129.54 90)
+			(at 141.732 129.54 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4610,7 +4620,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 137.16 129.54 0)
+			(at 138.43 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4619,7 +4629,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 137.16 129.54 0)
+			(at 138.43 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4628,7 +4638,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 137.16 129.54 0)
+			(at 138.43 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4650,7 +4660,7 @@
 	)
 	(symbol
 		(lib_id "power:VCC")
-		(at 137.16 124.46 270)
+		(at 138.43 124.46 270)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4659,7 +4669,7 @@
 		(dnp no)
 		(uuid "824848a9-f25a-41ef-a5fc-eca8cafe9017")
 		(property "Reference" "#PWR07"
-			(at 133.35 124.46 0)
+			(at 134.62 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4668,7 +4678,7 @@
 			)
 		)
 		(property "Value" "VCC"
-			(at 140.462 124.46 90)
+			(at 141.732 124.46 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4677,7 +4687,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 137.16 124.46 0)
+			(at 138.43 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4686,7 +4696,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 137.16 124.46 0)
+			(at 138.43 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4695,7 +4705,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 137.16 124.46 0)
+			(at 138.43 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4848,7 +4858,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 127 48.26 90)
+		(at 138.43 48.26 90)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4857,7 +4867,7 @@
 		(dnp no)
 		(uuid "f50c911d-f672-41ef-9c8a-021f78a84935")
 		(property "Reference" "#PWR08"
-			(at 133.35 48.26 0)
+			(at 144.78 48.26 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4866,7 +4876,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 130.556 48.26 90)
+			(at 141.986 48.26 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4875,7 +4885,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 127 48.26 0)
+			(at 138.43 48.26 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4884,7 +4894,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 127 48.26 0)
+			(at 138.43 48.26 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4893,7 +4903,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 127 48.26 0)
+			(at 138.43 48.26 0)
 			(effects
 				(font
 					(size 1.27 1.27)
