@@ -62,9 +62,9 @@
 #define LYNX_HEADER_SIZE 64
 #define LYNX_WE 8
 #define LYNX_OE 9
-#define LYNX_AUDIN 46
+#define LYNX_AUDIN_ON 0x80000
 #define LYNX_BLOCKADDR 2048UL
-#define LYNX_BLOCKCOUNT 256UL
+#define LYNX_BLOCKCOUNT 256
 // Includes \0
 static const char LYNX[5] = "LYNX";
 
@@ -90,10 +90,8 @@ void setup_LYNX() {
   // CE is tied low, not accessible
   pinMode(LYNX_WE, OUTPUT);
   pinMode(LYNX_OE, OUTPUT);
-  pinMode(LYNX_AUDIN, OUTPUT);
   digitalWrite(LYNX_WE, HIGH);
   digitalWrite(LYNX_OE, HIGH);
-  digitalWrite(LYNX_AUDIN, HIGH);
 
   strcpy(romName, LYNX);
   mode = CORE_LYNX;
@@ -103,11 +101,12 @@ static void dataDir_LYNX(byte direction) {
   DDRC = (direction == OUTPUT) ? 0xff : 0x00;
 }
 
-static uint8_t readByte_LYNX(uint32_t addr, uint8_t audin = 0) {
+static uint8_t readByte_LYNX(uint32_t addr) {
   digitalWrite(LYNX_OE, HIGH);
   PORTF = addr & 0xff;
   PORTK = (addr >> 8) & 0xff;
-  PORTL = ((addr >> 16) & 0b111) | (audin << 3);
+  // AUDIN connected to L3
+  PORTL = ((addr >> 16) & 0b1111);
   digitalWrite(LYNX_OE, LOW);
   delayMicroseconds(20);
   uint8_t data = PINC;
@@ -134,7 +133,7 @@ static bool detectCart_LYNX() {
     // If any differences are detected when AUDIN=1, AUDIN is used to bankswitch
     // meaning we also use the maximum block size
     // (1024kb cart / 256 blocks = 4kb block bank switched between lower/upper 2kb blocks)
-    if (b != readByte_LYNX(i, 1)) {
+    if (b != readByte_LYNX(i + LYNX_AUDIN_ON)) {
       lynxUseAudin = true;
       lynxBlockSize = 2048;
       break;
@@ -147,6 +146,10 @@ static bool detectCart_LYNX() {
       lynxBlockSize = max(lynxBlockSize, 1024);
     } else if (b != readByte_LYNX(i + 256)) {
       lynxBlockSize = max(lynxBlockSize, 512);
+    }
+    // Stop early if we hit the maximum block size (2048)
+    if (lynxBlockSize >= LYNX_BLOCKADDR) {
+      break;
     }
   }
 
@@ -184,40 +187,26 @@ static void writeHeader_LYNX() {
   myFile.write(header, LYNX_HEADER_SIZE);
 }
 
-// Saves memory by using existing sd buffer instead of a second block-sized buffer (which could be up to 2KB)
-// Minimum block size is 512b, size of sdBuffer is 512b, all block sizes multiples of 512b,
-// so we shouldn't need to check for leftovers...
-static inline void ringBufferWrite_LYNX(uint32_t blocki, uint8_t byte) {
-  sdBuffer[blocki % 512] = byte;
-  if ((blocki + 1) % 512 == 0) {
-    myFile.write(sdBuffer, 512);
-  }
-}
-
 static void readROM_LYNX() {
   dataDir_LYNX(INPUT);
 
   // The upper part of the address is used as a block address
   // There are always 256 blocks, but the size of the block can vary
   // So outer loop always steps through block addresses
-
-  uint32_t i;
   const uint32_t upto = LYNX_BLOCKCOUNT * LYNX_BLOCKADDR;
   for (uint32_t blockAddr = 0; blockAddr < upto; blockAddr += LYNX_BLOCKADDR) {
     draw_progressbar(blockAddr, upto);
     blinkLED();
 
-    if (lynxUseAudin) {
-      // AUDIN bank switching uses a 4kb block split to 2 banks
-      for (i = 0; i < lynxBlockSize / 2; i++) {
-        ringBufferWrite_LYNX(i, readByte_LYNX(blockAddr + i, 0));
+    for (uint32_t i = 0; i < lynxBlockSize; i++) {
+      uint32_t addr = blockAddr + i;
+      if (lynxUseAudin && i >= lynxBlockSize / 2) {
+        addr += LYNX_AUDIN_ON - lynxBlockSize / 2;
       }
-      for (; i < lynxBlockSize; i++) {
-        ringBufferWrite_LYNX(i, readByte_LYNX(blockAddr + i - (lynxBlockSize / 2), 1));
-      }
-    } else {
-      for (i = 0; i < lynxBlockSize; i++) {
-        ringBufferWrite_LYNX(i, readByte_LYNX(i + blockAddr));
+      uint8_t byte = readByte_LYNX(addr);
+      sdBuffer[i % 512] = byte;
+      if ((i + 1) % 512 == 0) {
+        myFile.write(sdBuffer, 512);
       }
     }
   }
@@ -248,6 +237,10 @@ void lynxMenu() {
       print_STR(done_STR, true);
       display_Update();
       wait();
+      break;
+
+    case 1:
+      resetArduino();
       break;
   }
 }
