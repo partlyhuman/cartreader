@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "OSCR CASIO LOOPY ADAPTER")
-		(date "2023-06-14")
-		(rev "V1")
+		(date "2024-07-19")
+		(rev "V2")
 	)
 	(lib_symbols
 		(symbol "Connector_Generic:Conn_01x36"
