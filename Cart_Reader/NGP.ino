@@ -1,13 +1,10 @@
 //******************************************
 // NGP MODULE
 //******************************************
-#ifdef enable_NGP
+#ifdef ENABLE_NGP
 
-static const char ngpMenuItem1[] PROGMEM = "Read ROM";
 static const char ngpMenuItem2[] PROGMEM = "Read chip info";
-static const char ngpMenuItem3[] PROGMEM = "Change ROM size";
-//static const char ngpMenuItemReset[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsNGP[] PROGMEM = { ngpMenuItem1, ngpMenuItem2, ngpMenuItem3, string_reset2 };
+static const char* const menuOptionsNGP[] PROGMEM = { FSTRING_READ_ROM, ngpMenuItem2, FSTRING_SET_SIZE, FSTRING_RESET };
 
 static const char ngpRomItem1[] PROGMEM = "4 Mbits / 512 KB";
 static const char ngpRomItem2[] PROGMEM = "8 Mbits / 1 MB";
@@ -80,7 +77,7 @@ void ngpMenu() {
       break;
   }
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -174,7 +171,7 @@ void printCartInfo_NGP() {
 
   println_Msg(F("NGP Cart Info"));
 
-  print_Msg(F("Name: "));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(romName);
 
   print_Msg(F("App ID: "));
@@ -191,7 +188,7 @@ void printCartInfo_NGP() {
   else
     println_Msg(F("Unknown"));
 
-  print_Msg(F("ROM Size: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   if (cartSize == 0) {
     println_Msg(F("Unknown"));
   } else {
@@ -211,31 +208,17 @@ void readROM_NGP(char* outPathBuf, size_t bufferSize) {
     changeSize_NGP();
 
   // generate fullname of rom file
-  snprintf(fileName, FILENAME_LENGTH, "%s.ngp", romName);
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "NGP/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("NGP", "ROM", romName, "ngp");
 
   // filling output file path to buffer
   if (outPathBuf != NULL && bufferSize > 0)
     snprintf(outPathBuf, bufferSize, "%s/%s", folder, fileName);
 
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+  printAndIncrementFolder(true);
 
   // open file on sdcard
   if (!myFile.open(fileName, O_RDWR | O_CREAT))
     print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
 
   // back to read mode
   dataOut();
@@ -266,13 +249,7 @@ void scanChip_NGP() {
   display_Clear();
 
   // generate name of report file
-  snprintf(fileName, FILENAME_LENGTH, "%s.txt", romName);
-
-  // create a new folder to save report file
-  EEPROM_readAnything(0, foldern);
-  snprintf(folder, sizeof(folder), "NGP/ROM/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("NGP", "ROM", romName, "txt");
 
   print_Msg(F("Saving chip report to "));
   print_Msg(folder);

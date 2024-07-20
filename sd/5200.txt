@@ -1,0 +1,225 @@
+Activision Decathlon
+0,2
+
+Astro Chase
+1,2
+
+Atari PAM - Pete's Test
+0,1
+
+Atari PAM Diagnostics
+1,2
+
+Atari PAM System Test
+0,1
+
+Ballblazer
+0,3
+
+Beamrider
+0,2
+
+BerZerk
+0,2
+
+Blue Print
+0,2
+
+Boogie
+0,0
+
+Bounty Bob Strikes Back!
+2,4
+
+Buck Rogers
+1,2
+
+Centipede
+1,2
+
+Choplifter!
+0,2
+
+Congo Bongo
+1,2
+
+Countermeasure
+1,2
+
+Defender
+1,2
+
+Dig Dug
+1,2
+
+Dreadnaught Factor
+0,1
+
+Frogger
+0,1
+
+Frogger II
+1,2
+
+Galaxian
+0,1
+
+Gorf
+0,1
+
+Gremlins
+0,3
+
+Gyruss
+1,2
+
+H.E.R.O.
+0,2
+
+James Bond 007
+1,2
+
+Joust
+1,2
+
+Jungle Hunt
+1,2
+
+Kaboom!
+0,0
+
+Kangaroo
+1,2
+
+Keystone Kapers
+0,1
+
+K-Razy Shoot-Out
+0,1
+
+Mario Bros.
+0,3
+
+MegaMania
+0,1
+
+Meteorites
+0,2
+
+Miner 2049er
+0,2
+
+Missile Command
+0,1
+
+Montezuma's Revenge
+1,2
+
+Moon Patrol
+0,2
+
+Mountain King
+0,1
+
+Mr. Do!'s Castle
+0,1
+
+Ms. Pac-Man
+1,2
+
+Pac-Man
+1,2
+
+Pengo
+0,3
+
+Pitfall II
+0,2
+
+Pitfall!
+0,1
+
+Pole Position
+1,2
+
+Popeye
+1,2
+
+Q-bert
+0,1
+
+QIX
+1,2
+
+Quest for Quintana Roo
+0,2
+
+RealSports Baseball
+0,3
+
+RealSports Basketball
+0,3
+
+RealSports Football
+1,2
+
+RealSports Soccer
+1,2
+
+RealSports Tennis
+1,2
+
+Rescue on Fractalus!
+0,3
+
+River Raid
+0,1
+
+Robotron 2084
+0,2
+
+Space Dungeon
+1,2
+
+Space Invaders
+0,1
+
+Space Shuttle
+0,2
+
+Star Raiders
+1,2
+
+Star Trek
+1,2
+
+Star Wars - Return of the Jedi
+0,1
+
+Star Wars - The Arcade Game
+1,2
+
+Super Breakout
+0,0
+
+Super Cobra
+0,1
+
+Vanguard
+0,3
+
+Wizard of Wor
+0,2
+
+Yellow Submarine
+0,0
+
+Zaxxon
+0,3
+
+Zenji
+0,1
+
+Zone Ranger
+0,2
+

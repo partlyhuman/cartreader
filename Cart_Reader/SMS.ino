@@ -1,7 +1,7 @@
 //***********************************************************
 // SEGA MASTER SYSTEM / MARK III / GAME GEAR / SG-1000 MODULE
 //***********************************************************
-#ifdef enable_SMS
+#ifdef ENABLE_SMS
 
 //******************************************
 //   Menus
@@ -16,10 +16,7 @@ static const char SMSAdapterItem6[] PROGMEM = "SG-1000 raphnet";
 static const char* const SMSAdapterMenu[] PROGMEM = { SMSAdapterItem1, SMSAdapterItem2, SMSAdapterItem3, SMSAdapterItem4, SMSAdapterItem5, SMSAdapterItem6 };
 
 // Operations menu
-static const char SMSOperationItem1[] PROGMEM = "Read Rom";
-static const char SMSOperationItem2[] PROGMEM = "Read from SRAM";
-static const char SMSOperationItem3[] PROGMEM = "Write to SRAM";
-static const char* const SMSOperationMenu[] PROGMEM = { SMSOperationItem1, SMSOperationItem2, SMSOperationItem3, string_reset2 };
+static const char* const SMSOperationMenu[] PROGMEM = { FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, FSTRING_RESET };
 
 // Rom sizes menu
 static const char SMSRomSizeItem1[] PROGMEM = "8 KB";
@@ -103,40 +100,40 @@ void smsOperations() {
 
   if (system_sms) {
     if (adapter_raphnet) {
-      SMSOperation = question_box(F("SMS/MarkIII raphnet"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem1), menuOptions, 4, 0);
     } else if (adapter_retrode) {
-      SMSOperation = question_box(F("SMS Retrode"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem2), menuOptions, 4, 0);
     } else if (adapter_retron) {
-      SMSOperation = question_box(F("SMS Retron 3in1"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem3), menuOptions, 4, 0);
     }
   } else if (system_gg) {
     if (adapter_retrode) {
-      SMSOperation = question_box(F("GameGear Retrode"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem4), menuOptions, 4, 0);
     } else if (adapter_retron) {
-      SMSOperation = question_box(F("GameGear Retron 3in1"), menuOptions, 4, 0);
+      SMSOperation = question_box(FS(SMSAdapterItem5), menuOptions, 4, 0);
     }
   } else if (system_sg1000) {
-    SMSOperation = question_box(F("SG-1000 raphnet"), menuOptions, 1, 0);
+    SMSOperation = question_box(FS(SMSAdapterItem6), menuOptions, 1, 0);
   }
 
   switch (SMSOperation) {
     case 0:
       // Read ROM
-      mode = mode_SMS;
+      mode = CORE_SMS;
       setup_SMS();
       readROM_SMS();
       break;
 
     case 1:
       // Read SRAM
-      mode = mode_SMS;
+      mode = CORE_SMS;
       setup_SMS();
       readSRAM_SMS();
       break;
 
     case 2:
       // Write SRAM
-      mode = mode_SMS;
+      mode = CORE_SMS;
       setup_SMS();
       writeSRAM_SMS();
       break;
@@ -394,7 +391,7 @@ void getCartInfo_SMS() {
     default:
       cartSize = 48 * 1024UL;
       // LED Error
-      setColor_RGB(0, 0, 255);
+      rgbLed(blue_color);
       break;
   }
 
@@ -421,7 +418,7 @@ void getCartInfo_SMS() {
     // print_Msg(bank);
     // print_Msg(F(" offset "));
     // print_Msg_PaddedHex32(mirror_offset + 0x7FF0);
-    // println_Msg(F(""));
+    // println_Msg(FS(FSTRING_EMPTY));
 
     if (strcmp(romName2, romName) == 0) {
       break;
@@ -509,13 +506,13 @@ void getCartInfo_SMS() {
     // Display cart info
     display_Clear();
     println_Msg(F("SMS/GG header not found"));
-    println_Msg(F(" "));
-    print_Msg(F("Name: "));
+    println_Msg(FS(FSTRING_SPACE));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
     print_Msg(F("Selected Size: "));
     print_Msg(cartSize / 1024);
     println_Msg(F("KB"));
-    println_Msg(F(" "));
+    println_Msg(FS(FSTRING_SPACE));
     sprintf(romName, "UNKNOWN");
   }
 
@@ -527,17 +524,17 @@ void getCartInfo_SMS() {
     } else {
       println_Msg(F("GG header info"));
     }
-    println_Msg(F(" "));
-    print_Msg(F("Name: "));
+    println_Msg(FS(FSTRING_SPACE));
+    print_Msg(FS(FSTRING_NAME));
     println_Msg(romName);
-    print_Msg(F("Size: "));
+    print_Msg(FS(FSTRING_SIZE));
     print_Msg(cartSize / 1024);
     println_Msg(F("KB"));
-    println_Msg(F(" "));
+    println_Msg(FS(FSTRING_SPACE));
   }
 
 // Wait for user input
-#if (defined(enable_LCD) || defined(enable_OLED))
+#if (defined(ENABLE_LCD) || defined(ENABLE_OLED))
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -545,7 +542,7 @@ void getCartInfo_SMS() {
 #endif
 
   // Turn off LED
-  setColor_RGB(0, 0, 0);
+  rgbLed(black_color);
 }
 
 //******************************************
@@ -553,33 +550,15 @@ void getCartInfo_SMS() {
 //******************************************
 void readROM_SMS() {
   // Get name, add extension depending on the system and convert to char array for sd lib
-  EEPROM_readAnything(0, foldern);
-  strcpy(fileName, romName);
   if (system_sms) {
-    strcat(fileName, ".sms");
-    sprintf(folder, "SMS/ROM/%s/%d", romName, foldern);
+    createFolder("SMS", "ROM", romName, "sms");
   } else if (system_gg) {
-    strcat(fileName, ".gg");
-    sprintf(folder, "GG/ROM/%s/%d", romName, foldern);
+    createFolder("GG", "ROM", romName, "gg");
   } else {
-    strcat(fileName, ".sg");
-    sprintf(folder, "SG1000/ROM/%s/%d", romName, foldern);
+    createFolder("SG1000", "ROM", romName, "sg");
   }
 
-  // Create a new folder
-  sd.chdir("/");
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // Write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder(true);
 
   // Open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -619,13 +598,13 @@ void readROM_SMS() {
       //   for (word xi = 0; xi < 0x100; xi++) {
       //     if (xi%16==0) {
       //       print_Msg_PaddedHex16(xi);
-      //       print_Msg(F(" "));
+      //       print_Msg(FS(FSTRING_SPACE));
       //     }
       //     print_Msg_PaddedHexByte(sdBuffer[xi]);
       //     if (xi>0&&((xi+1)%16)==0) {
-      //       println_Msg(F(""));
+      //       println_Msg(FS(FSTRING_EMPTY));
       //     } else {
-      //       print_Msg(F(" "));
+      //       print_Msg(FS(FSTRING_SPACE));
       //     }
       //   }
       // }
@@ -649,7 +628,7 @@ void readROM_SMS() {
     compareCRC("sg1000.txt", 0, 1, 0);
   }
 
-#ifdef global_log
+#ifdef ENABLE_GLOBAL_LOG
   save_log();
 #endif
 
@@ -661,58 +640,37 @@ void readROM_SMS() {
 ///*****************************************
 void readSRAM_SMS() {
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, romName);
-  strcat(fileName, ".sav");
+  const char* system;
 
-  EEPROM_readAnything(0, foldern);
   if (system_gg) {
-    sprintf(folder, "GG/SAVE/%s/%d", romName, foldern);
+    system = "GG";
   } else {
-    sprintf(folder, "SMS/SAVE/%s/%d", romName, foldern);
+    system = "SMS";
   }
+  createFolderAndOpenFile(system, "SAVE", romName, "sav");
 
-  // Create a new folder
-  sd.chdir("/");
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  // Write the whole 32KB
+  // When there is only 8KB of SRAM, the contents should be duplicated
+  word bankSize = 16 * 1024UL;
+  for (byte currBank = 0x0; currBank < 2; currBank++) {
+    writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
 
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
+    // Blink led
+    blinkLED();
 
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  // Create file on sd card
-  if (myFile.open(fileName, O_RDWR | O_CREAT)) {
-    // Write the whole 32KB
-    // When there is only 8KB of SRAM, the contents should be duplicated
-    word bankSize = 16 * 1024UL;
-    for (byte currBank = 0x0; currBank < 2; currBank++) {
-      writeByte_SMS(0xFFFC, 0x08 | (currBank << 2));
-
-      // Blink led
-      blinkLED();
-
-      // Read 16KB from slot 2 which starts at 0x8000
-      for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
-        // Fill SD buffer
-        for (int currByte = 0; currByte < 512; currByte++) {
-          sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
-        }
-        myFile.write(sdBuffer, 512);
+    // Read 16KB from slot 2 which starts at 0x8000
+    for (word currBuffer = 0; currBuffer < bankSize; currBuffer += 512) {
+      // Fill SD buffer
+      for (int currByte = 0; currByte < 512; currByte++) {
+        sdBuffer[currByte] = readByte_SMS(0x8000 + currBuffer + currByte);
       }
+      myFile.write(sdBuffer, 512);
     }
-    // Close file
-    myFile.close();
-    print_STR(press_button_STR, 1);
-    display_Update();
-  } else {
-    print_FatalError(sd_error_STR);
   }
+  // Close file
+  myFile.close();
+  print_STR(press_button_STR, 1);
+  display_Update();
 }
 
 //**********************************************
@@ -722,7 +680,7 @@ void writeSRAM_SMS() {
   if (false) {
     print_Error(F("DISABLED"));
   } else {
-    fileBrowser(F("Select file"));
+    fileBrowser(FS(FSTRING_SELECT_FILE));
 
     sd.chdir();
     sprintf(filePath, "%s/%s", filePath, fileName);
@@ -740,7 +698,7 @@ void writeSRAM_SMS() {
       }
       print_Msg(F("sramSize: "));
       print_Msg(sramSize);
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
       word bankSize = 16 * 1024;
       for (word address = 0x0; address < sramSize; address += 512) {
         byte currBank = address >= bankSize ? 1 : 0;

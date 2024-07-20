@@ -1,7 +1,7 @@
 /******************************************
   SUPER FAMICOM SUFAMI TURBO MODULE
 ******************************************/
-#ifdef enable_ST
+#ifdef ENABLE_ST
 
 /******************************************
   Menu
@@ -9,7 +9,7 @@
 // Sufami Turbo menu items
 static const char stMenuItem1[] PROGMEM = "Read cart in Slot A";
 static const char stMenuItem2[] PROGMEM = "Read cart in Slot B";
-static const char* const menuOptionsST[] PROGMEM = { stMenuItem1, stMenuItem2, string_reset2 };
+static const char* const menuOptionsST[] PROGMEM = { stMenuItem1, stMenuItem2, FSTRING_RESET };
 
 void stMenu() {
   // Create ST menu with title and 3 options to choose from
@@ -167,26 +167,7 @@ void readSlot(bool cartSlot) {
 // Read ST rom to SD card
 void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   // create a new folder to save rom file
-  EEPROM_readAnything(0, foldern);
-  strcpy(fileName, "SUFAMI_TURBO.st");
-  sprintf(folder, "ST/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("ST", "ROM", "SUFAMI_TURBO", "st");
 
   // Read specified banks
   readLoRomBanks(bankStart + 0x80, bankEnd + 0x80, &myFile);
@@ -194,6 +175,10 @@ void readRom_ST(unsigned int bankStart, unsigned int bankEnd) {
   // Close file:
   myFile.close();
 
+  // Compare dump CRC with db values
+  compareCRC("st.txt", 0, 1, 0);
+  
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();

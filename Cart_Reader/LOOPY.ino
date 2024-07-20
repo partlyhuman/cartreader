@@ -59,7 +59,7 @@
 //
 // By @partlyhuman
 // Special thanks to @kasamikona
-#ifdef enable_LOOPY
+#ifdef ENABLE_LOOPY
 
 // SH-1 memory map locations, ROM starts here
 const uint32_t LOOPY_MAP_ROM_ZERO = 0x0E000000;
@@ -109,7 +109,7 @@ void setup_LOOPY() {
 
   getCartInfo_LOOPY();
 
-  mode = mode_LOOPY;
+  mode = CORE_LOOPY;
 }
 
 //******************************************
@@ -117,12 +117,8 @@ void setup_LOOPY() {
 //******************************************
 
 // Base Menu
-static const char loopyMenuItem0[] PROGMEM = "Refresh Cart";
-static const char loopyMenuItem1[] PROGMEM = "Read ROM";
-static const char loopyMenuItem2[] PROGMEM = "Backup SRAM";
-static const char loopyMenuItem3[] PROGMEM = "Restore SRAM";
 static const char loopyMenuItem4[] PROGMEM = "Format SRAM";
-static const char* const menuOptionsLOOPY[] PROGMEM = { loopyMenuItem0, loopyMenuItem1, loopyMenuItem2, loopyMenuItem3, loopyMenuItem4, string_reset2 };
+static const char* const menuOptionsLOOPY[] PROGMEM = { FSTRING_REFRESH_CART, FSTRING_READ_ROM, FSTRING_READ_SAVE, FSTRING_WRITE_SAVE, loopyMenuItem4, FSTRING_RESET };
 
 void loopyMenu() {
   convertPgm(menuOptionsLOOPY, 5);
@@ -188,10 +184,10 @@ void loopyMenu() {
       break;
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   if (waitForInput) {
     // Wait for user input
-    println_Msg(F(""));
+    println_Msg(FS(FSTRING_EMPTY));
     // Prints string out of the common strings array either with or without newline
     print_STR(press_button_STR, 1);
     display_Update();
@@ -497,20 +493,20 @@ void getCartInfo_LOOPY() {
   setRomName_LOOPY("loopy.txt", checksumStr);
 
   println_Msg(F("Cart Info"));
-  println_Msg(F(" "));
-  print_Msg(F("Name: "));
+  println_Msg(FS(FSTRING_SPACE));
+  print_Msg(FS(FSTRING_NAME));
   println_Msg(loopyRomNameLong);
-  print_Msg(F("Checksum: "));
+  print_Msg(FS(FSTRING_CHECKSUM));
   println_Msg(checksumStr);
-  print_Msg(F("Size: "));
+  print_Msg(FS(FSTRING_SIZE));
   print_Msg(cartSize * 8 / 1024 / 1024);
   println_Msg(F(" MBit"));
   print_Msg(F("Sram: "));
   print_Msg(sramSize * 8 / 1024);
   println_Msg(F(" KBit"));
-  println_Msg(F(" "));
+  println_Msg(FS(FSTRING_SPACE));
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   // Wait for user input
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
@@ -526,25 +522,7 @@ void getCartInfo_LOOPY() {
 void readROM_LOOPY() {
   dataIn_LOOPY();
 
-  sprintf(fileName, "%s.bin", romName);
-
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "LOOPY/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(sd_error_STR);
-  }
+  createFolderAndOpenFile("LOOPY", "ROM", romName, "bin");
 
   draw_progressbar(0, cartSize);
 
@@ -661,12 +639,7 @@ void formatSRAM_LOOPY() {
 void readSRAM_LOOPY() {
   dataIn_LOOPY();
 
-  sprintf(fileName, "%s.sav", romName);
-
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "LOOPY/SAVE/%s/%d", romName, foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("LOOPY", "SAVE", romName, "sav");
 
   foldern = foldern + 1;
   EEPROM_writeAnything(0, foldern);

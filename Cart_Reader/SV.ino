@@ -3,7 +3,7 @@
 // Revision 1.0.0 October 22nd 2018
 // Added BSX Sram, copied from skamans enhanced sketch //sanni
 //******************************************
-#ifdef enable_SV
+#ifdef ENABLE_SV
 
 /******************************************
    Satellaview 8M Memory Pack
@@ -37,8 +37,7 @@ static const char svFlashMenuItem1[] PROGMEM = "Read Memory Pack";
 static const char svFlashMenuItem2[] PROGMEM = "Write Memory Pack";
 static const char svFlashMenuItem3[] PROGMEM = "Read BS-X Sram";
 static const char svFlashMenuItem4[] PROGMEM = "Write BS-X Sram";
-static const char svFlashMenuItem5[] PROGMEM = "Back";
-static const char* const menuOptionsSVFlash[] PROGMEM = { svFlashMenuItem1, svFlashMenuItem2, svFlashMenuItem3, svFlashMenuItem4, svFlashMenuItem5 };
+static const char* const menuOptionsSVFlash[] PROGMEM = { svFlashMenuItem1, svFlashMenuItem2, svFlashMenuItem3, svFlashMenuItem4, FSTRING_RESET };
 
 
 void svMenu() {
@@ -122,7 +121,7 @@ void setup_SV() {
     clockgen.output_enable(SI5351_CLK1, 0);
     clockgen.output_enable(SI5351_CLK2, 1);
   }
-#ifdef clockgen_installed
+#ifdef ENABLE_CLOCKGEN
   else {
     display_Clear();
     print_FatalError(F("Clock Generator not found"));
@@ -289,13 +288,7 @@ void readSRAM_SV() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "BSX.srm");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SNES/SAVE/BSX/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
+  createFolder("SNES", "SAVE", "BSX", "srm");
 
   // write new folder number back to eeprom
   foldern = foldern + 1;
@@ -374,7 +367,7 @@ void writeSRAM_SV() {
     println_Msg(F("SRAM writing finished"));
     display_Update();
   } else {
-    print_Error(F("File doesnt exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 
@@ -405,7 +398,7 @@ unsigned long verifySRAM_SV() {
     myFile.close();
     return writeErrors;
   } else {
-    print_Error(F("Can't open file"));
+    print_Error(open_file_STR);
     return 1;
   }
 }
@@ -420,29 +413,7 @@ void readROM_SV() {
   controlIn_SNES();
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "MEMPACK.bs");
-
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "SNES/ROM/%s/%d", "MEMPACK", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  //clear the screen
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
-
-  //open file on sd card
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
+  createFolderAndOpenFile("SNES", "ROM", "MEMPACK", "bs");
 
   // Read Banks
   for (int currBank = 0x40; currBank < 0x50; currBank++) {
@@ -517,7 +488,7 @@ void writeROM_SV(void) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (0xFF != readBank_SV(currBank, currByte)) {
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(F("Erase failed"));
           display_Update();
           myFile.close();
@@ -560,7 +531,7 @@ void writeROM_SV(void) {
       draw_progressbar(((currBank - 0xC0) * 0x10000), 0x100000);
       for (long currByte = 0; currByte < 65536; currByte++) {
         if (myFile.read() != readBank_SV(currBank, currByte)) {
-          println_Msg(F(""));
+          println_Msg(FS(FSTRING_EMPTY));
           println_Msg(F("Verify failed"));
           display_Update();
           myFile.close();
@@ -578,7 +549,7 @@ void writeROM_SV(void) {
     wait();
 
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 }
 

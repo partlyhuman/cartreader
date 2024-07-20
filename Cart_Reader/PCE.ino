@@ -2,27 +2,30 @@
 // PC Engine & TurboGrafx dump code by tamanegi_taro
 // April 18th 2018 Revision 1.0.1 Initial version
 // August 12th 2019 Revision 1.0.2 Added Tennokoe Bank support
+// June 29th 2024 Revision 1.0.3 Added repro HuCard flashing
 //
 // Special thanks
 // sanni - Arduino cart reader
 // skaman - ROM size detection
 // NO-INTRO - CRC list for game name detection
 // Chris Covell - Tennokoe bank support
+// partlyhuman - repro HuCard support
 //
 //******************************************
-#ifdef enable_PCE
+#ifdef ENABLE_PCE
 
 /******************************************
   Defines
  *****************************************/
-#define HUCARD 0
-#define TURBOCHIP 1
-#define HUCARD_NOSWAP 2
 #define DETECTION_SIZE 64
 #define FORCED_SIZE 1024
 #define CHKSUM_SKIP 0
 #define CHKSUM_OK 1
 #define CHKSUM_ERROR 2
+enum PCE_MODE_T : uint8_t { HUCARD,
+                            TURBOCHIP,
+                            HUCARD_NOSWAP,
+                            PCE_FLASH };
 
 /******************************************
    Prototype Declarations
@@ -53,10 +56,10 @@ uint8_t tennokoe_bank_index = 0;
 static const char pceMenuItem1[] PROGMEM = "HuCARD (swapped)";
 static const char pceMenuItem2[] PROGMEM = "HuCARD(not swapped)";
 static const char pceMenuItem3[] PROGMEM = "Turbochip";
-static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, string_reset2 };
+static const char pceMenuItem4[] PROGMEM = "HuCARD Flash Repro";
+static const char *const menuOptionspce[] PROGMEM = { pceMenuItem1, pceMenuItem2, pceMenuItem3, pceMenuItem4, FSTRING_RESET };
 
 // PCE card menu items
-static const char menuOptionspceCart_0[] PROGMEM = "Read ROM";
 static const char menuOptionspceCart_1[] PROGMEM = "Read RAM Bank %d";
 static const char menuOptionspceCart_2[] PROGMEM = "Write RAM Bank %d";
 static const char menuOptionspceCart_3[] PROGMEM = "Inc Bank Number";
@@ -65,18 +68,20 @@ static const char menuOptionspceCart_5[] PROGMEM = "Set %dK ROM size";
 static const char menuOptionspceCart_5_fmt[] PROGMEM = "ROM size now %dK";
 
 // Turbochip menu items
-static const char pceTCMenuItem1[] PROGMEM = "Read ROM";
-static const char *const menuOptionspceTC[] PROGMEM = { pceTCMenuItem1, string_reset2 };
+static const char *const menuOptionspceTC[] PROGMEM = { FSTRING_READ_ROM, FSTRING_RESET };
 
-// PCE start menu
+#ifdef ENABLE_FLASH
+// Flash repro menu items
+// static const char menuOptionspceFlash1[] PROGMEM = "Program";
+static const char *const menuOptionspceFlash[] PROGMEM = { flashMenuItemWrite, FSTRING_RESET };
+#endif
+
+// PCE start menu, first a device type is selected and set in pce_internal_mode
 void pcsMenu(void) {
-  // create menu with title and 3 options to choose from
   unsigned char pceDev;
-  // Copy menuOptions out of progmem
-  convertPgm(menuOptionspce, 3);
-  pceDev = question_box(F("Select device"), menuOptions, 3, 0);
+  convertPgm(menuOptionspce, 4);
+  pceDev = question_box(F("Select device"), menuOptions, 4, 0);
 
-  // wait for user choice to come back from the question box menu
   switch (pceDev) {
     case 0:
       //Hucard
@@ -84,7 +89,7 @@ void pcsMenu(void) {
       display_Update();
       pce_internal_mode = HUCARD;
       setup_cart_PCE();
-      mode = mode_PCE;
+      mode = CORE_PCE;
       break;
 
     case 1:
@@ -93,7 +98,7 @@ void pcsMenu(void) {
       display_Update();
       pce_internal_mode = HUCARD_NOSWAP;
       setup_cart_PCE();
-      mode = mode_PCE;
+      mode = CORE_PCE;
       break;
 
     case 2:
@@ -102,12 +107,26 @@ void pcsMenu(void) {
       display_Update();
       pce_internal_mode = TURBOCHIP;
       setup_cart_PCE();
-      mode = mode_PCE;
+      mode = CORE_PCE;
       break;
 
+#ifdef ENABLE_FLASH
     case 3:
+      //Flash Repro
+      display_Clear();
+      display_Update();
+      pce_internal_mode = PCE_FLASH;
+      setup_cart_PCE();
+      mode = CORE_PCE;
+      break;
+#endif
+
+    case 4:
       resetArduino();
       break;
+
+    default:
+      print_MissingModule();  // does not return
   }
 }
 
@@ -230,7 +249,7 @@ uint8_t read_byte_PCE(uint32_t address) {
   ret = PINC;
 
   //Swap bit order for PC Engine HuCARD
-  if (pce_internal_mode == HUCARD) {
+  if (pce_internal_mode == HUCARD || pce_internal_mode == PCE_FLASH) {
     ret = ((ret & 0x01) << 7) | ((ret & 0x02) << 5) | ((ret & 0x04) << 3) | ((ret & 0x08) << 1) | ((ret & 0x10) >> 1) | ((ret & 0x20) >> 3) | ((ret & 0x40) >> 5) | ((ret & 0x80) >> 7);
   }
 
@@ -275,7 +294,7 @@ void write_byte_PCE(uint32_t address, uint8_t data) {
           "nop\n\t");
 
   //Swap bit order for PC Engine HuCARD
-  if (pce_internal_mode == HUCARD) {
+  if (pce_internal_mode == HUCARD || pce_internal_mode == PCE_FLASH) {
     data = ((data & 0x01) << 7) | ((data & 0x02) << 5) | ((data & 0x04) << 3) | ((data & 0x08) << 1) | ((data & 0x10) >> 1) | ((data & 0x20) >> 3) | ((data & 0x40) >> 5) | ((data & 0x80) >> 7);
   }
 
@@ -314,9 +333,10 @@ uint32_t detect_rom_size_PCE(void) {
   uint32_t rom_size;
   uint8_t read_byte;
   uint8_t current_byte;
-  uint8_t detect_32, detect_128, detect_256, detect_512, detect_768;
+  uint8_t detect_16, detect_32, detect_128, detect_256, detect_512, detect_768;
 
   //Initialize variables
+  detect_16 = 0;
   detect_32 = 0;
   detect_128 = 0;
   detect_256 = 0;
@@ -326,15 +346,22 @@ uint32_t detect_rom_size_PCE(void) {
   //Set pins to read PC Engine cart
   pin_read_write_PCE();
 
-  //Confirm where mirror address start from (32KB, 128KB, 256KB, 512KB, 768KB, or 1024KB)
+  //Confirm where mirror address start from (16KB, 32KB, 128KB, 256KB, 512KB, 768KB, or 1024KB)
   for (current_byte = 0; current_byte < DETECTION_SIZE; current_byte++) {
-    if ((current_byte != detect_32) && (current_byte != detect_128) && (current_byte != detect_256) && (current_byte != detect_512) && (current_byte != detect_768)) {
+    if ((current_byte != detect_16) && (current_byte != detect_32) && (current_byte != detect_128) && (current_byte != detect_256) && (current_byte != detect_512) && (current_byte != detect_768)) {
       //If none matched, it is 1024KB
       break;
     }
 
-    //read byte for 32KB, 128KB, 256KB, 512KB detection
+    //read byte for 16KB, 32KB, 128KB, 256KB, 512KB detection
     read_byte = read_byte_PCE(current_byte);
+
+    //16KB detection
+    if (current_byte == detect_16) {
+      if (read_byte_PCE(current_byte + 16UL * 1024UL) == read_byte) {
+        detect_16++;
+      }
+    }
 
     //32KB detection
     if (current_byte == detect_32) {
@@ -374,11 +401,13 @@ uint32_t detect_rom_size_PCE(void) {
   }
 
   //debug
-  //sprintf(fileName, "%d %d %d %d %d", detect_32, detect_128, detect_256, detect_512, detect_768); //using filename global variable as string. Initialzed in below anyways.
+  //sprintf(fileName, "%d %d %d %d %d %d", detect_16, detect_32, detect_128, detect_256, detect_512, detect_768); //using filename global variable as string. Initialzed in below anyways.
   //println_Msg(fileName);
 
   //ROM size detection by result
-  if (detect_32 == DETECTION_SIZE) {
+  if (detect_16 == DETECTION_SIZE) {
+    rom_size = 16;
+  } else if (detect_32 == DETECTION_SIZE) {
     rom_size = 32;
   } else if (detect_128 == DETECTION_SIZE) {
     rom_size = 128;
@@ -408,7 +437,7 @@ uint32_t detect_rom_size_PCE(void) {
     if (read_byte_PCE(0x1F26) == 'P' && read_byte_PCE(0x1F27) == 'O' && read_byte_PCE(0x1F28) == 'P' && read_byte_PCE(0x1F29) == 'U' && read_byte_PCE(0x1F2A) == 'L' && read_byte_PCE(0x1F2B) == 'O' && read_byte_PCE(0x1F2C) == 'U' && read_byte_PCE(0x1F2D) == 'S') {
       rom_size = 512;
     }
-    //Dinoforce (World)
+    //Dinoforce (Japan)
     if (read_byte_PCE(0x15A) == 'D' && read_byte_PCE(0x15B) == 'I' && read_byte_PCE(0x15C) == 'N' && read_byte_PCE(0x15D) == 'O' && read_byte_PCE(0x15E) == '-' && read_byte_PCE(0x15F) == 'F' && read_byte_PCE(0x160) == 'O' && read_byte_PCE(0x161) == 'R' && read_byte_PCE(0x162) == 'C' && read_byte_PCE(0x163) == 'E') {
       rom_size = 512;
     }
@@ -590,9 +619,9 @@ void read_tennokoe_bank_PCE(int bank_index) {
     //   for (int i = 0; i < 16; i++) {
     //     uint8_t b = sdBuffer[c + i];
     //     print_Msg_PaddedHexByte(b);
-    //     //print_Msg(F(" "));
+    //     //print_Msg(FS(FSTRING_SPACE));
     //   }
-    //   println_Msg(F(""));
+    //   println_Msg(FS(FSTRING_EMPTY));
     // }
 
     if (block_index == 0) {
@@ -601,7 +630,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
         uint8_t b = sdBuffer[i];
         print_Msg_PaddedHexByte(b);
       }
-      println_Msg(F(""));
+      println_Msg(FS(FSTRING_EMPTY));
     }
     if (block_index == 0 && sdBuffer[2] == 0x42 && sdBuffer[3] == 0x4D) {
       if (sdBuffer[0] != 0x48 || sdBuffer[1] != 0x55) {
@@ -620,7 +649,7 @@ void read_tennokoe_bank_PCE(int bank_index) {
   //Close the file:
   myFile.close();
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -717,10 +746,10 @@ void write_tennokoe_bank_PCE(int bank_index) {
     println_Msg(F("Finished"));
 
   } else {
-    print_Error(F("File doesn't exist"));
+    print_Error(FS(FSTRING_FILE_DOESNT_EXIST));
   }
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -743,25 +772,9 @@ void read_rom_PCE(void) {
   println_Msg(F("KB"));
 
   // Get name, add extension and convert to char array for sd lib
-  strcpy(fileName, "PCEROM");
-  strcat(fileName, ".pce");
+  createFolder("PCE", "ROM", "PCEROM", "pce");
 
-  // create a new folder for the save file
-  EEPROM_readAnything(0, foldern);
-  sd.chdir("/");
-  sprintf(folder, "PCE/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  print_Msg(F("Saving ROM to "));
-  print_Msg(folder);
-  print_Msg(F("/"));
-  println_Msg(fileName);
-  display_Update();
-
-  // write new folder number back to eeprom
-  foldern = foldern + 1;
-  EEPROM_writeAnything(0, foldern);
+  printAndIncrementFolder();
 
   //open file on sd card
   if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
@@ -810,11 +823,162 @@ void read_rom_PCE(void) {
   //CRC search and rename ROM
   crc_search(fileName, folder, rom_size, crc);
 
-  println_Msg(F(""));
-  print_STR(press_button_STR, 1);
+  println_Msg(FS(FSTRING_EMPTY));
+  print_STR(press_button_STR, true);
   display_Update();
   wait();
 }
+
+#ifdef ENABLE_FLASH
+void flash_mode_PCE() {
+  pin_read_write_PCE();
+  data_output_PCE();
+  PORTH |= (1 << 3);  // RD HIGH
+  // write_byte_PCE sets WR
+}
+
+// Implements data complement status checking
+// We only look at D7, or the highest bit of expected
+void flash_wait_status_PCE(uint8_t expected) {
+  set_cs_rd_low_PCE();
+  data_input_PCE();
+  
+  uint8_t status;
+  do {
+    PORTH &= ~(1 << 3);  // RD low
+    // one nop = 62.5ns
+    // tOE = 30-50ns depending on flash
+    NOP;
+    status = PINC;
+    PORTH |= (1 << 3);  // RD high
+    // reversed, bit 0 is the MSB
+  } while ((status & 0x1) != (expected >> 7));
+
+  data_output_PCE();
+  // leave RD high on exit
+}
+
+// Flashes a reproduction HuCard that's directly wired to a flash chip
+// Supported flash: SST39SF0x0, MX29F0x0 1Mbit-8Mbit
+// Developed against Ichigobankai's design https://github.com/partlyhuman/HuCARD-repro
+void flash_PCE() {
+  println_Msg(F("Detecting..."));
+  display_Update();
+
+  // SOFTWARE ID PROGRAM
+  flash_mode_PCE();
+  write_byte_PCE(0x5555, 0xAA);
+  write_byte_PCE(0x2AAA, 0x55);
+  write_byte_PCE(0x5555, 0x90);
+  data_input_PCE();
+  // tIDA = 150ns
+  NOP;NOP;NOP;
+  // MFG,DEVICE
+  uint16_t deviceId = (read_byte_PCE(0x0) << 8) | read_byte_PCE(0x1);
+
+  // EXIT SOFTWARE ID PROGRAM
+  flash_mode_PCE();
+  write_byte_PCE(0x5555, 0xAA);
+  write_byte_PCE(0x2AAA, 0x55);
+  write_byte_PCE(0x5555, 0xF0);
+
+  flashSize = 0;
+  switch (deviceId) {
+    case 0xBFB5:
+      // SST39SF010 = 1Mbit
+      flashSize = 131072UL;
+      break;
+    case 0xBFB6:
+      // SST39SF020 = 2Mbit
+      flashSize = 262144UL;
+      break;
+    case 0xBFB7:
+      // SST39SF040 = 4Mbit
+      flashSize = 524288UL;
+      break;
+    case 0xC2A4:
+      // MX29F040 = 4Mbit
+      flashSize = 524288UL;
+      break;
+    case 0xC2D5:
+      // MX29F080 = 8Mbit
+      flashSize = 1048576UL;
+      break;
+  }
+
+  if (flashSize <= 0) {
+    print_Msg(F("UNKNOWN "));
+    println_Msg(deviceId);
+    display_Update();
+    wait();
+    resetArduino();
+    return;
+  } else {
+    print_Msg(FS(FSTRING_SIZE));
+    print_Msg(flashSize / 131072UL);
+    println_Msg(F("Mbit"));
+    display_Update();
+    wait();
+  }
+
+  filePath[0] = '\0';
+  sd.chdir("/");
+  fileBrowser(FS(FSTRING_SELECT_FILE));
+  display_Clear();
+
+  if (openFlashFile()) {
+
+    println_Msg(F("Erasing..."));
+    display_Update();
+
+    // CHIP ERASE PROGRAM
+    flash_mode_PCE();
+    write_byte_PCE(0x5555, 0xAA);
+    write_byte_PCE(0x2AAA, 0x55);
+    write_byte_PCE(0x5555, 0x80);
+    write_byte_PCE(0x5555, 0xAA);
+    write_byte_PCE(0x2AAA, 0x55);
+    write_byte_PCE(0x5555, 0x10);
+    // Data complement polling, wait until highest bit is 1
+    flash_wait_status_PCE(0xFF);
+
+    print_STR(flashing_file_STR, true);
+    display_Update();
+    uint32_t processedProgressBar = 0;
+    uint32_t totalProgressBar = (uint32_t)fileSize;
+    draw_progressbar(0, totalProgressBar);
+
+    flash_mode_PCE();
+    const size_t BUFSIZE = 512;
+    for (unsigned long currAddr = 0; currAddr < fileSize; currAddr += BUFSIZE) {
+      myFile.read(sdBuffer, BUFSIZE);
+
+      if (currAddr % 4096 == 0) {
+        blinkLED();
+      }
+
+      for (int currByte = 0; currByte < BUFSIZE; currByte++) {
+        // BYTE PROGRAM
+        byte b = sdBuffer[currByte];
+        write_byte_PCE(0x5555, 0xAA);
+        write_byte_PCE(0x2AAA, 0x55);
+        write_byte_PCE(0x5555, 0xA0);
+        write_byte_PCE(currAddr + currByte, b);
+        flash_wait_status_PCE(b);
+      }
+
+      // update progress bar
+      processedProgressBar += BUFSIZE;
+      draw_progressbar(processedProgressBar, totalProgressBar);
+    }
+    myFile.close();
+    pin_init_PCE();
+    print_STR(done_STR, true);
+  }
+  display_Update();
+  wait();
+}
+#endif
 
 // PC Engine Menu
 void pceMenu() {
@@ -822,7 +986,7 @@ void pceMenu() {
   unsigned char mainMenu;
 
   if (pce_internal_mode == HUCARD || pce_internal_mode == HUCARD_NOSWAP) {
-    strcpy_P(menuOptions[0], menuOptionspceCart_0);
+    strcpy_P(menuOptions[0], FSTRING_READ_ROM);
     sprintf_P(menuOptions[1], menuOptionspceCart_1, tennokoe_bank_index + 1);
     sprintf_P(menuOptions[2], menuOptionspceCart_2, tennokoe_bank_index + 1);
     strcpy_P(menuOptions[3], menuOptionspceCart_3);
@@ -832,7 +996,7 @@ void pceMenu() {
     } else {
       sprintf_P(menuOptions[5], menuOptionspceCart_5, FORCED_SIZE);
     }
-    strcpy_P(menuOptions[6], string_reset2);
+    strcpy_P(menuOptions[6], FSTRING_RESET);
     mainMenu = question_box(F("PCE HuCARD menu"), menuOptions, 7, 0);
 
     // wait for user choice to come back from the question box menu
@@ -869,7 +1033,7 @@ void pceMenu() {
         resetArduino();
         break;
     }
-  } else {
+  } else if (pce_internal_mode == TURBOCHIP) {
     // Copy menuOptions out of progmem
     convertPgm(menuOptionspceTC, 2);
     mainMenu = question_box(F("TG TurboChip menu"), menuOptions, 2, 0);
@@ -884,6 +1048,26 @@ void pceMenu() {
         resetArduino();
         break;
     }
+  }
+#ifdef ENABLE_FLASH
+  else if (pce_internal_mode == PCE_FLASH) {
+    const int max = 2;
+    convertPgm(menuOptionspceFlash, max);
+    mainMenu = question_box(F("Flash Repro menu"), menuOptions, max, 0);
+
+    switch (mainMenu) {
+      case 0:
+        flash_PCE();
+        break;
+
+      case 1:
+        resetArduino();
+        break;
+    }
+  }
+#endif
+  else {
+    print_MissingModule();  // does not return
   }
 }
 

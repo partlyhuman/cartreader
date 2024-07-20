@@ -1,7 +1,7 @@
 //******************************************
 // INTELLIVISION MODULE
 //******************************************
-#ifdef enable_INTV
+#ifdef ENABLE_INTV
 
 // Mattel Intellivision
 // Cartridge Pinout
@@ -80,9 +80,7 @@ byte intvlo = 0;  // Lowest Entry
 byte intvhi = 5;  // Highest Entry
 
 byte intvmapper;
-byte newintvmapper;
 byte intvsize;
-byte newintvsize;
 
 // EEPROM MAPPING
 // 07 MAPPER
@@ -92,11 +90,7 @@ byte newintvsize;
 //  Menu
 //******************************************
 // Base Menu
-static const char intvMenuItem1[] PROGMEM = "Select Cart";
-static const char intvMenuItem2[] PROGMEM = "Read ROM";
-static const char intvMenuItem3[] PROGMEM = "Set Mapper + Size";
-//static const char intvMenuItem4[] PROGMEM = "Reset"; (stored in common strings array)
-static const char* const menuOptionsINTV[] PROGMEM = { intvMenuItem1, intvMenuItem2, intvMenuItem3, string_reset2 };
+static const char* const menuOptionsINTV[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void setup_INTV() {
   // Request 5V
@@ -134,7 +128,7 @@ void setup_INTV() {
   checkStatus_INTV();
   strcpy(romName, "INTV");
 
-  mode = mode_INTV;
+  mode = CORE_INTV;
 }
 
 void intvMenu() {
@@ -309,28 +303,7 @@ void readSegment_INTV(uint32_t startaddr, uint32_t endaddr) {
 
 // MODIFIED READ ROUTINE FOR ALL 10 MAPPERS
 void readROM_INTV() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".int");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "INTV/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(create_file_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("INTV", "ROM", romName, "int");
 
   switch (intvmapper) {
     case 0:                              //default mattel up to 32K (8K/12K/16K/24K/32K)
@@ -428,7 +401,7 @@ void readROM_INTV() {
   // Compare CRC32 to database and rename ROM if found
   compareCRC("intv.txt", 0, 1, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);
   display_Update();
@@ -488,113 +461,22 @@ void ecsBank(uint32_t addr, uint8_t bank) {
 //******************************************
 // MAPPER CODE
 //******************************************
-
-void setMapper_INTV() {
-#if (defined(enable_OLED) || defined(enable_LCD))
-  int b = 0;
-  int i = 0;
-  // Check Button Status
-#if defined(enable_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));      // PG2
-#endif
-  if (buttonVal1 == LOW) {  // Button Pressed
-    while (1) {             // Scroll Mapper List
-#if defined(enable_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
-      boolean buttonVal1 = (PING & (1 << 2));  // PG2
-#endif
-      if (buttonVal1 == HIGH) {  // Button Released
-        // Correct Overshoot
-        if (i == 0)
-          i = intvmapcount - 1;
-        else
-          i--;
-        break;
-      }
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      intvindex = i * 4;
-      intvmapselect = pgm_read_byte(intvmapsize + intvindex);
-      println_Msg(intvmapselect);
-      display_Update();
-      if (i == (intvmapcount - 1))
-        i = 0;
-      else
-        i++;
-      delay(250);
-    }
-  }
-
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printMapperSelection_INTV(int index) {
   display_Clear();
-  print_Msg(F("Mapper: "));
-  intvindex = i * 4;
+  print_Msg(FS(FSTRING_MAPPER));
+  intvindex = index * 4;
   intvmapselect = pgm_read_byte(intvmapsize + intvindex);
   println_Msg(intvmapselect);
-  println_Msg(F(""));
-#if defined(enable_OLED)
-  print_STR(press_to_change_STR, 1);
-  print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-  print_STR(rotate_to_change_STR, 1);
-  print_STR(press_to_select_STR, 1);
+}
 #endif
-  display_Update();
 
-  while (1) {
-    b = checkButton();
-
-    if (b == 2) {  // Previous Mapper (doubleclick)
-      if (i == 0)
-        i = intvmapcount - 1;
-      else
-        i--;
-
-      // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      intvindex = i * 4;
-      intvmapselect = pgm_read_byte(intvmapsize + intvindex);
-      println_Msg(intvmapselect);
-      println_Msg(F(""));
-#if defined(enable_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
-    }
-    if (b == 1) {  // Next Mapper (press)
-      if (i == (intvmapcount - 1))
-        i = 0;
-      else
-        i++;
-
-      // Only update display after input because of slow LCD library
-      display_Clear();
-      print_Msg(F("Mapper: "));
-      intvindex = i * 4;
-      intvmapselect = pgm_read_byte(intvmapsize + intvindex);
-      println_Msg(intvmapselect);
-      println_Msg(F(""));
-#if defined(enable_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
-    }
-    if (b == 3) {  // Long Press - Execute (hold)
-      newintvmapper = intvmapselect;
-      break;
-    }
-  }
+void setMapper_INTV() {
+  byte newintvmapper;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+  navigateMenu(0, intvmapcount - 1, &printMapperSelection_INTV);
+  newintvmapper = intvmapselect;
+  
   display.setCursor(0, 56);
   print_Msg(F("MAPPER "));
   print_Msg(newintvmapper);
@@ -618,7 +500,7 @@ setmapper:
   }
   if (intvmapfound == false) {
     Serial.println(F("MAPPER NOT SUPPORTED!"));
-    Serial.println(F(""));
+    Serial.println(FS(FSTRING_EMPTY));
     newintvmapper = 0;
     goto setmapper;
   }
@@ -639,78 +521,26 @@ void checkMapperSize_INTV() {
   }
 }
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_INTV(int index) {
+    display_Clear();
+    print_Msg(FS(FSTRING_ROM_SIZE));
+    println_Msg(pgm_read_byte(&(INTV[index])));
+}
+#endif
+
 void setROMSize_INTV() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+  byte newintvsize;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (intvlo == intvhi)
     newintvsize = intvlo;
   else {
-    int b = 0;
-    int i = intvlo;
+    newintvsize = navigateMenu(intvlo, intvhi, &printRomSize_INTV);
 
-    // Only update display after input because of slow LCD library
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(pgm_read_byte(&(INTV[i])));
-    println_Msg(F(""));
-#if defined(enable_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == intvlo)
-          i = intvhi;
-        else
-          i--;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(pgm_read_byte(&(INTV[i])));
-        println_Msg(F(""));
-#if defined(enable_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == intvhi)
-          i = intvlo;
-        else
-          i++;
-
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(pgm_read_byte(&(INTV[i])));
-        println_Msg(F(""));
-#if defined(enable_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        newintvsize = i;
-        break;
-      }
-    }
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[newintvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -735,7 +565,7 @@ setrom:
     newintvsize = sizeROM.toInt() + intvlo;
     if (newintvsize > intvhi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -759,14 +589,14 @@ void checkStatus_INTV() {
     EEPROM_writeAnything(8, intvsize);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("INTELLIVISION READER"));
-  println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  println_Msg(FS(FSTRING_EMPTY));
   print_Msg(F("MAPPER:   "));
   println_Msg(intvmapper);
-  print_Msg(F("ROM SIZE: "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(pgm_read_byte(&(INTV[intvsize])));
   println_Msg(F("K"));
   display_Update();
@@ -777,178 +607,115 @@ void checkStatus_INTV() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(pgm_read_byte(&(INTV[intvsize])));
   Serial.println(F("K"));
-  Serial.println(F(""));
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
 //******************************************
 // CART SELECT CODE
 //******************************************
-void setCart_INTV() {
-  char gamename[100];
-  char tempStr2[2];
+struct database_entry_INTV {
   char crc_search[9];
+  byte gameMapper;
+  byte gameSize;
+};
 
+void readDataLine_INTV(FsFile& database, void* entry) {
+  struct database_entry_INTV* castEntry = (database_entry_INTV*)entry;
+  // Read CRC32 checksum
+  for (byte i = 0; i < 8; i++) {
+    checksumStr[i] = char(database.read());
+  }
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read CRC32 of first 512 bytes
+  for (byte i = 0; i < 8; i++) {
+    castEntry->crc_search[i] = char(database.read());
+  }
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read mapper
+  castEntry->gameMapper = database.read() - 48;
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read rom size
+  // Read the next ascii character and subtract 48 to convert to decimal
+  castEntry->gameSize = ((database.read() - 48) * 10) + (database.read() - 48);
+
+  // Skip over semicolon
+  database.seekCur(1);
+
+  // Read SRAM size
+  byte sramSize __attribute__((unused)) = database.read() - 48;
+
+  // Skip rest of line
+  database.seekCur(2);
+}
+
+void printDataLine_INTV(void* entry) {
+  struct database_entry_INTV* castEntry = (database_entry_INTV*)entry;
+  print_Msg(FS(FSTRING_SIZE));
+  print_Msg(castEntry->gameSize);
+  println_Msg(F("KB"));
+  print_Msg(FS(FSTRING_MAPPER));
+  println_Msg(castEntry->gameMapper);
+}
+
+void setCart_INTV() {
   //go to root
   sd.chdir();
+
+  struct database_entry_INTV entry;
 
   // Select starting letter
   byte myLetter = starting_letter();
 
   // Open database
   if (myFile.open("intv.txt", O_READ)) {
-    // Skip ahead to selected starting letter
-    if ((myLetter > 0) && (myLetter <= 26)) {
-      while (myFile.available()) {
-        // Read current name
-        get_line(gamename, &myFile, 96);
+    seek_first_letter_in_database(myFile, myLetter);
 
-        // Compare selected letter with first letter of current name until match
-        while (gamename[0] != 64 + myLetter) {
-          skip_line(&myFile);
-          skip_line(&myFile);
-          get_line(gamename, &myFile, 96);
-        }
-        break;
-      }
-
-      // Rewind one line
-      rewind_line(myFile);
-    }
-
-    // Display database
-    while (myFile.available()) {
-      display_Clear();
-
-      // Read game name
-      get_line(gamename, &myFile, 96);
-
-      // Read CRC32 checksum
-      sprintf(checksumStr, "%c", myFile.read());
-      for (byte i = 0; i < 7; i++) {
-        sprintf(tempStr2, "%c", myFile.read());
-        strcat(checksumStr, tempStr2);
-      }
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read CRC32 of first 512 bytes
-      sprintf(crc_search, "%c", myFile.read());
-      for (byte i = 0; i < 7; i++) {
-        sprintf(tempStr2, "%c", myFile.read());
-        strcat(crc_search, tempStr2);
-      }
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read mapper
-      intvmapper = myFile.read() - 48;
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read rom size
-      // Read the next ascii character and subtract 48 to convert to decimal
-      cartSize = myFile.read() - 48;
-
-      // Remove leading 0 for single digit cart sizes
-      if (cartSize != 0) {
-        cartSize = cartSize * 10 + myFile.read() - 48;
-      } else {
-        cartSize = myFile.read() - 48;
-      }
-
-      // Skip over semicolon
-      myFile.seekCur(1);
-
-      // Read SRAM size
-      byte sramSize __attribute__((unused)) = myFile.read() - 48;
-
-      // Skip rest of line
-      myFile.seekCur(2);
-
-      // Skip every 3rd line
-      skip_line(&myFile);
-
-      println_Msg(F("Select your cartridge"));
-      println_Msg(F(""));
-      println_Msg(gamename);
-      print_Msg(F("Size: "));
-      print_Msg(cartSize);
-      println_Msg(F("KB"));
-      print_Msg(F("Mapper: "));
-      println_Msg(intvmapper);
-#if defined(enable_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#elif defined(SERIAL_MONITOR)
-      println_Msg(F("U/D to Change"));
-      println_Msg(F("Space to Select"));
-#endif
-      display_Update();
-
-      int b = 0;
-      while (1) {
-        // Check button input
-        b = checkButton();
-
-        // Next
-        if (b == 1) {
+    if(checkCartSelection(myFile, &readDataLine_INTV, &entry, &printDataLine_INTV)) {
+      //byte INTV[] = {8, 12, 16, 24, 32, 48};
+      switch (entry.gameSize) {
+        case 8:
+          intvsize = 0;
           break;
-        }
 
-        // Previous
-        else if (b == 2) {
-          rewind_line(myFile, 6);
+        case 12:
+          intvsize = 1;
           break;
-        }
 
-        // Selection
-        else if (b == 3) {
-          //byte INTV[] = {8, 12, 16, 24, 32, 48};
-          switch (cartSize) {
-            case 8:
-              intvsize = 0;
-              break;
-
-            case 12:
-              intvsize = 1;
-              break;
-
-            case 16:
-              intvsize = 2;
-              break;
-
-            case 24:
-              intvsize = 3;
-              break;
-
-            case 32:
-              intvsize = 4;
-              break;
-
-            case 48:
-              intvsize = 5;
-              break;
-
-            default:
-              intvsize = 0;
-              break;
-          }
-          EEPROM_writeAnything(7, intvmapper);
-          EEPROM_writeAnything(8, intvsize);
-          myFile.close();
+        case 16:
+          intvsize = 2;
           break;
-        }
+
+        case 24:
+          intvsize = 3;
+          break;
+
+        case 32:
+          intvsize = 4;
+          break;
+
+        case 48:
+          intvsize = 5;
+          break;
+
+        default:
+          intvsize = 0;
+          break;
       }
+      EEPROM_writeAnything(7, entry.gameMapper);
+      EEPROM_writeAnything(8, intvsize);
     }
   } else {
-    print_FatalError(F("Database file not found"));
+    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
   }
 }
 #endif

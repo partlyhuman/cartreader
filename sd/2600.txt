@@ -1,0 +1,1485 @@
+32 in 1
+240
+
+3-D Tic-Tac-Toe
+032
+
+Acid Drop
+246
+
+Action Force
+064
+
+Adventure
+064
+
+Adventures of TRON
+064
+
+Air Raid
+064
+
+Air Raiders
+064
+
+Airlock
+064
+
+Air-Sea Battle
+032
+
+AKA Space Adventure
+064
+
+Alien
+064
+
+Alpha Beam with Ernie
+248
+
+Amidar
+064
+
+Armor Ambush
+064
+
+Artillery Duel
+248
+
+Assault
+064
+
+Asterix
+248
+
+Asteroids
+248
+
+Astroblast
+064
+
+Atari Video Cube
+064
+
+Atlantis
+064
+
+Atlantis II
+064
+
+Bachelor Party
+064
+
+Bachelorette Party
+064
+
+Backgammon
+064
+
+Bank Heist
+064
+
+Barnstorming
+064
+
+Base Attack
+064
+
+Basic Math
+032
+
+BASIC Programming
+064
+
+Basketball
+032
+
+Battlezone
+248
+
+Beamrider
+248
+
+Beany Bopper
+064
+
+Beat 'Em & Eat 'Em
+064
+
+Berenstain Bears
+248
+
+Bermuda
+064
+
+Bermuda Triangle
+064
+
+Berzerk
+064
+
+Berzerk Enhanced
+244
+
+Big Bird's Egg Catch
+248
+
+Blackjack
+032
+
+Blueprint
+248
+
+BMX Air Master
+246
+
+Bobby Is Going Home
+064
+
+Boing!
+064
+
+Bowling
+032
+
+Boxing
+032
+
+Brain Games
+032
+
+Breakout
+032
+
+Bridge
+064
+
+Buck Rogers - Planet of Zoom
+248
+
+Bugs
+064
+
+Bump 'n' Jump
+231
+
+Bumper Bash
+064
+
+BurgerTime
+231
+
+Burning Desire
+064
+
+Cakewalk
+064
+
+California Games
+246
+
+Canyon Bomber
+032
+
+Carnival
+064
+
+Casino
+064
+
+Cat Trax
+064
+
+Cathouse Blues
+064
+
+Centipede
+248
+
+Challenge
+248
+
+Challenge of.... Nexar
+064
+
+Chase the Chuckwagon
+064
+
+Checkers
+032
+
+China Syndrome
+064
+
+Chopper Command
+064
+
+Chuck Norris Superkicks
+248
+
+Circus Atari
+064
+
+Coco Nuts
+064
+
+Codebreaker
+032
+
+Combat
+032
+
+Commando
+246
+
+Commando Raid
+064
+
+Condor Attack
+064
+
+Confrontation
+064
+
+Congo Bongo
+248
+
+Cookie Monster Munch
+248
+
+Cosmic Ark
+064
+
+Cosmic Commuter
+064
+
+Cosmic Corridor
+064
+
+Cosmic Creeps
+064
+
+Cosmic Swarm
+032
+
+Crackpots
+064
+
+Crash Dive
+064
+
+Crazy Climber
+248
+
+Cross Force
+064
+
+Crossbow
+246
+
+Crypts of Chaos
+064
+
+Crystal Castles
+246
+
+Cubicolor
+064
+
+Cubo Magico
+064
+
+Custer's Revenge
+064
+
+Dancing Plate
+064
+
+Dark Cavern
+064
+
+Dark Chambers
+246
+
+Dark Mage
+248
+
+Deadly Duck
+064
+
+Death Trap
+064
+
+Decathlon
+254
+
+Defender
+064
+
+Defender II
+248
+
+Demolition Herby
+064
+
+Demon Attack
+064
+
+Demons to Diamonds
+064
+
+Desert Falcon
+246
+
+Dice Puzzle
+064
+
+Dig Dug
+246
+
+Dishaster
+064
+
+Dodge 'Em
+064
+
+Dolphin
+064
+
+Donald Duck's Speedboat
+248
+
+Donkey Kong
+064
+
+Donkey Kong Jr
+248
+
+Double Dragon
+246
+
+Double Dunk
+246
+
+Dragon Defender
+064
+
+Dragonfire
+064
+
+Dragster
+032
+
+Dukes of Hazzard
+246
+
+E.T.
+248
+
+Earth Dies Screaming
+064
+
+Eggomania
+064
+
+Elevator Action
+248
+
+Eli's Ladder
+064
+
+Encounter at L-5
+064
+
+Enduro
+064
+
+Entombed
+064
+
+Espial
+063
+
+Exocet
+064
+
+Extra Terrestrials
+064
+
+Fantastic Voyage
+064
+
+Farmyard Fun
+064
+
+Fast Eddie
+064
+
+Fast Food
+064
+
+Fatal Run
+244
+
+Fathom
+248
+
+Fighter Pilot
+246
+
+Final Approach
+064
+
+Fire Fighter
+064
+
+Fire Fly
+064
+
+Fishing Derby
+032
+
+Flag Capture
+032
+
+Flash Gordon
+064
+
+Football
+032
+
+Forest
+064
+
+Frankenstein's Monster
+064
+
+Freeway
+032
+
+Frisco
+064
+
+Frog Pond
+248
+
+Frogger
+064
+
+Frogger II
+224
+
+Frogs and Flies
+064
+
+Front Line
+248
+
+Frostbite
+064
+
+G.I. Joe
+064
+
+Galaxian
+248
+
+Gamma Attack
+032
+
+Gangster Alley
+064
+
+Gas Hog
+064
+
+Gauntlet
+064
+
+Ghost Manor
+248
+
+Ghostbusters
+248
+
+Ghostbusters II
+246
+
+Gigolo
+064
+
+Glacier Patrol
+064
+
+Glib
+064
+
+Golf
+032
+
+Gopher
+064
+
+Gorf
+064
+
+Grand Prix
+246
+
+Gravitar
+248
+
+Great Escape
+064
+
+Gremlins
+248
+
+Guardian
+064
+
+Gyruss
+224
+
+H.E.R.O.
+248
+
+Halloween
+064
+
+Hangman
+064
+
+Harbor Escape
+064
+
+Haunted House
+064
+
+Hole Hunter
+064
+
+Home Run
+032
+
+Human Cannonball
+032
+
+Hunt & Score
+032
+
+I Want My Mommy
+064
+
+Ice Hockey
+064
+
+Ikari Warriors
+246
+
+Indy 500
+032
+
+Infiltrate
+064
+
+International Soccer
+064
+
+IQ 180
+064
+
+James Bond 007
+224
+
+Jaw Breaker
+064
+
+Journey Escape
+064
+
+Joust
+248
+
+JoustPong
+064
+
+Jr. Pac-Man
+246
+
+Jungle Fever
+064
+
+Jungle Hunt
+248
+
+Kaboom!
+032
+
+Kangaroo
+248
+
+Karate
+064
+
+Keystone Kapers
+064
+
+King Kong
+064
+
+Klax
+246
+
+Knight on the Town
+064
+
+Kool-Aid Man
+064
+
+Krull
+248
+
+Kung Fu Superkicks
+248
+
+Kung-Fu Master
+248
+
+Lady in Wading
+064
+
+Laser Blast
+032
+
+Laser Gates
+064
+
+Lilly Advenure
+064
+
+Lochjaw
+064
+
+Lock 'n' Chase
+064
+
+London Blitz
+064
+
+Lost Luggage
+064
+
+M.A.D.
+064
+
+M.A.S.H
+064
+
+MagiCard
+192
+
+Malagai
+064
+
+Mangia'
+064
+
+Marauder
+064
+
+Marine Wars
+064
+
+Mario Bros.
+248
+
+Master Builder
+064
+
+Masters of the Universe
+231
+
+Math Gran Prix
+064
+
+Maze Craze
+064
+
+Mega Force
+064
+
+MegaBoy
+240
+
+MegaMania
+064
+
+Midnight Magic
+246
+
+Millipede
+246
+
+Mind Maze
+248
+
+Miner 2049er
+063
+
+Miner 2049er Volume II
+063
+
+Mines of Minos
+064
+
+Miniature Golf
+032
+
+Miss Piggy's Wedding
+248
+
+Missile Command
+064
+
+Missile Control
+064
+
+Mission 3000 A.D.
+064
+
+Mission Survive
+064
+
+Mogul Maniac
+064
+
+Montezuma's Revenge
+224
+
+Moon Patrol
+248
+
+Moonsweeper
+248
+
+Motocross
+064
+
+Motocross Racer
+248
+
+MotoRodeo
+246
+
+Mountain King
+250
+
+Mouse Trap
+064
+
+Mr. Do!
+248
+
+Mr. Do!'s Castle
+224
+
+Mr. Postman
+064
+
+Ms. Pac-Man
+248
+
+Music Machine
+064
+
+My Golf
+248
+
+Name This Game
+064
+
+Night Driver
+032
+
+Night Stalker
+064
+
+Nightmare
+064
+
+No Escape!
+064
+
+Nuts
+064
+
+Obelix
+248
+
+Off the Wall
+246
+
+Oink!
+064
+
+Omega Race
+250
+
+Open Sesame
+064
+
+Oscar's Trash Race
+248
+
+Othello
+032
+
+Out of Control
+064
+
+Outlaw
+032
+
+Pac-Kong
+064
+
+Pac-Man
+064
+
+Panda Chase
+064
+
+Parachute
+064
+
+Pele's Soccer
+064
+
+Pengo
+248
+
+Pepsi Invaders
+064
+
+Pete Rose Baseball
+246
+
+Phantom Tank
+064
+
+Pharaoh's Curse
+064
+
+Philly Flasher
+064
+
+Phoenix
+248
+
+Pick 'n' Pile
+246
+
+Picnic
+064
+
+Piece o' Cake
+064
+
+Pigs in Space
+248
+
+Pitfall II
+208
+
+Pitfall!
+064
+
+Planet Patrol
+064
+
+Plaque Attack
+064
+
+Polaris
+063
+
+Pole Position
+248
+
+Polo
+032
+
+Pompeii
+064
+
+Pooyan
+064
+
+Popeye
+224
+
+Porky's
+248
+
+Pressure Cooker
+248
+
+Private Eye
+248
+
+Pyramid War
+064
+
+Q-bert
+064
+
+Q-bert's Qubes
+224
+
+Quadrun
+248
+
+Quest for Quintana Roo
+248
+
+Quick Step!
+064
+
+Rabbit Transit
+248
+
+Racing Car
+064
+
+Racquetball
+064
+
+Radar Lock
+246
+
+Raft Rider
+064
+
+Raiders of the Lost Ark
+248
+
+Ram It
+064
+
+Rampage!
+246
+
+Raumpatrouille
+064
+
+Reactor
+064
+
+RealSports Baseball
+248
+
+RealSports Boxing
+246
+
+RealSports Football
+248
+
+RealSports Soccer
+248
+
+RealSports Tennis
+248
+
+RealSports Volleyball
+064
+
+Rescue Terra I
+064
+
+Resgate Espacial
+248
+
+Revenge of the Beefsteak Tomatoes
+064
+
+Riddle of the Sphinx
+064
+
+River Patrol
+063
+
+River Raid
+064
+
+River Raid II
+246
+
+Road Runner
+246
+
+Robin Hood
+248
+
+Robot Tank
+254
+
+Roc 'n Rope
+248
+
+Room of Doom
+064
+
+Rubik's Cube
+064
+
+Save Our Ship
+064
+
+Scuba Diver
+064
+
+Sea Hawk
+064
+
+Sea Hunt
+064
+
+Sea Monster
+064
+
+Seaquest
+064
+
+Secret Quest
+246
+
+Sentinel
+246
+
+Shark Attack
+064
+
+Shootin' Gallery
+064
+
+Shuttle Orbiter
+064
+
+Sir Lancelot
+248
+
+Skate Boardin'
+248
+
+Skeet Shoot
+032
+
+Ski Hunt
+064
+
+Ski Run
+064
+
+Skiing
+032
+
+Sky Diver
+032
+
+Sky Jinks
+032
+
+Sky Skipper
+064
+
+Slot Machine
+032
+
+Slot Racers
+032
+
+Smurf Rescue in Gargamels Castle
+248
+
+Smurfs Save the Day
+248
+
+Snail Against Squirrel
+064
+
+Sneak 'n Peek
+064
+
+Snoopy and the Red Baron
+248
+
+Solar Fox
+248
+
+Solar Storm
+064
+
+Solaris
+246
+
+Sorcerer
+064
+
+Sorcerer's Apprentice
+248
+
+Space Attack
+064
+
+Space Canyon
+064
+
+Space Cavern
+064
+
+Space Invaders
+064
+
+Space Jockey
+032
+
+Space Shuttle
+248
+
+Space Tunnel
+064
+
+Space War
+032
+
+Spacechase
+064
+
+SpaceMaster X-7
+064
+
+Spider Fighter
+064
+
+Spider Maze
+064
+
+Spider-Man
+064
+
+Spike's Peak
+248
+
+Spitfire Attack
+064
+
+Springer
+063
+
+Sprint Master
+246
+
+Spy Hunter
+248
+
+Squeeze Box
+064
+
+Squirrel
+064
+
+Sssnake
+064
+
+Stampede
+032
+
+Star Fox
+064
+
+Star Raiders
+248
+
+Star Ship
+032
+
+Star Strike
+064
+
+Star Trek
+248
+
+Star Voyager
+064
+
+Star Wars - Arcade Game
+224
+
+Star Wars - Death Star Battle
+224
+
+Star Wars - Empire Strikes Back
+064
+
+Star Wars - Jedi Arena
+064
+
+Stargate
+246
+
+Stargunner
+064
+
+StarMaster
+064
+
+Steeplechase
+032
+
+Stellar Track
+064
+
+Strategy X
+064
+
+Strawberry Shortcake
+064
+
+Street Racer
+032
+
+Stronghold
+064
+
+Stunt Man
+064
+
+Submarine Commander
+064
+
+Sub-Scan
+064
+
+Subterranea
+248
+
+Summer Games
+246
+
+Super Baseball
+246
+
+Super Breakout
+064
+
+Super Challenge Baseball
+064
+
+Super Challenge Football
+064
+
+Super Cobra
+224
+
+Super Football
+248
+
+Superman
+064
+
+Surfer's Paradise
+064
+
+Surround
+032
+
+Survival Run
+064
+
+SwordQuest - EarthWorld
+248
+
+SwordQuest - FireWorld
+248
+
+SwordQuest - WaterWorld
+248
+
+Tac-Scan
+064
+
+Tanks But No Tanks
+064
+
+Tapeworm
+064
+
+Tapper
+248
+
+Tax Avoiders
+248
+
+Taz
+248
+
+Tempest
+248
+
+Tennis
+032
+
+Texas Chainsaw Massacre
+064
+
+Threshold
+064
+
+Thunderground
+064
+
+Time Pilot
+249
+
+Time Warp
+064
+
+Title Match Pro Wrestling
+248
+
+Tomarc the Barbarian
+248
+
+Tomcat
+246
+
+Tooth Protectors
+224
+
+Towering Inferno
+064
+
+Track and Field
+246
+
+Treasure Below
+064
+
+Treasure Island
+064
+
+Trick Shot
+064
+
+TRON - Deadly Discs
+064
+
+Tunnel Runner
+250
+
+Turmoil
+064
+
+Tutankham
+224
+
+Universal Chaos
+064
+
+Up 'n Down
+248
+
+Vanguard
+248
+
+Venture
+064
+
+Video Checkers
+064
+
+Video Chess
+064
+
+Video Jogger
+064
+
+Video Life
+032
+
+Video Olympics
+032
+
+Video Pinball
+064
+
+Video Reflex
+064
+
+Vogel Flieh
+064
+
+Vulture Attack
+064
+
+Wabbit
+064
+
+Walker
+064
+
+Wall Ball
+064
+
+Wall Break
+064
+
+Wall-Defender
+064
+
+Warlords
+064
+
+Warplock
+064
+
+Wing War
+248
+
+Wings
+250
+
+Winter Games
+246
+
+Wizard of Wor
+064
+
+Word Zapper
+064
+
+World End
+064
+
+Worm War I
+064
+
+Xenophobe
+246
+
+X-Man
+064
+
+Yars' Revenge
+064
+
+Zaxxon
+248
+
+Zoo Fun
+064
+
+Z-Tack
+064
+

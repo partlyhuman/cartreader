@@ -1,7 +1,7 @@
 //******************************************
 // POKEMON MINI MODULE
 //******************************************
-#ifdef enable_POKE
+#ifdef ENABLE_POKE
 // Pokemon Mini
 // Cartridge Pinout
 // 32P 0.5mm pitch
@@ -79,8 +79,7 @@
 //  Menu
 //******************************************
 // Base Menu
-static const char pokeMenuItem1[] PROGMEM = "Read ROM";
-static const char* const menuOptionsPOKE[] PROGMEM = { pokeMenuItem1, string_reset2 };
+static const char* const menuOptionsPOKE[] PROGMEM = { FSTRING_READ_ROM, FSTRING_RESET };
 
 void pokeMenu() {
   convertPgm(menuOptionsPOKE, 2);
@@ -145,7 +144,7 @@ void setup_POKE() {
 
   strcpy(romName, "POKEMINI");
 
-  mode = mode_POKE;
+  mode = CORE_POKE;
 }
 
 //******************************************
@@ -240,28 +239,7 @@ void writeData_POKE(uint32_t addr, uint8_t data) {
 //******************************************
 
 void readROM_POKE() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".min");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "POKE/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_STR(saving_to_STR, 0);
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT))
-    print_FatalError(sd_error_STR);
-
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("POKE", "ROM", romName, "min");
 
   // read rom
   uint32_t progress = 0;
@@ -279,7 +257,7 @@ void readROM_POKE() {
 
   // compare dump CRC with db values
   compareCRC("pkmn.txt", 0, 1, 0);
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
 
   // Prints string out of the common strings array either with or without newline
   print_STR(press_button_STR, 1);

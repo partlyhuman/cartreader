@@ -1,7 +1,7 @@
 //******************************************
 // EMERSON ARCADIA 2001 MODULE
 //******************************************
-#if defined(enable_ARC)
+#if defined(ENABLE_ARC)
 // Emerson Arcadia 2001
 // Cartridge Pinout
 // 30P 2.54mm pitch connector
@@ -40,7 +40,6 @@ byte arclo = 0;  // Lowest Entry
 byte archi = 3;  // Highest Entry
 
 byte arcsize;
-byte newarcsize;
 
 // EEPROM MAPPING
 // 08 ROM SIZE
@@ -49,11 +48,7 @@ byte newarcsize;
 //  Menu
 //******************************************
 // Base Menu
-static const char arcMenuItem1[] PROGMEM = "Select Cart";
-static const char arcMenuItem2[] PROGMEM = "Read ROM";
-static const char arcMenuItem3[] PROGMEM = "Set Size";
-static const char arcMenuItem4[] PROGMEM = "Reset";
-static const char* const menuOptionsARC[] PROGMEM = { arcMenuItem1, arcMenuItem2, arcMenuItem3, arcMenuItem4 };
+static const char* const menuOptionsARC[] PROGMEM = { FSTRING_SELECT_CART, FSTRING_READ_ROM, FSTRING_SET_SIZE, FSTRING_RESET };
 
 void setup_ARC() {
   // Request 5V
@@ -93,7 +88,7 @@ void setup_ARC() {
   checkStatus_ARC();
   strcpy(romName, "ARCADIA");
 
-  mode = mode_ARC;
+  mode = CORE_ARC;
 }
 
 void arcMenu() {
@@ -104,7 +99,6 @@ void arcMenu() {
     case 0:
       // Select Cart
       setCart_ARC();
-      wait();
       setup_ARC();
       break;
 
@@ -156,28 +150,7 @@ void readSegment_ARC(uint16_t startaddr, uint16_t endaddr) {
 }
 
 void readROM_ARC() {
-  strcpy(fileName, romName);
-  strcat(fileName, ".bin");
-
-  // create a new folder for storing rom file
-  EEPROM_readAnything(0, foldern);
-  sprintf(folder, "ARC/ROM/%d", foldern);
-  sd.mkdir(folder, true);
-  sd.chdir(folder);
-
-  display_Clear();
-  print_Msg(F("Saving to "));
-  print_Msg(folder);
-  println_Msg(F("/..."));
-  display_Update();
-
-  // open file on sdcard
-  if (!myFile.open(fileName, O_RDWR | O_CREAT)) {
-    print_FatalError(create_file_STR);
-  }
-  // write new folder number back to EEPROM
-  foldern++;
-  EEPROM_writeAnything(0, foldern);
+  createFolderAndOpenFile("ARC", "ROM", romName, "bin");
 
   readSegment_ARC(0x0000, 0x0800);  // 2K
   if (arcsize > 0) {
@@ -191,10 +164,9 @@ void readROM_ARC() {
   }
   myFile.close();
 
-  unsigned long crcsize = ARC[arcsize] * 0x400;
-  calcCRC(fileName, crcsize, NULL, 0);
+  printCRC(fileName, NULL, 0);
 
-  println_Msg(F(""));
+  println_Msg(FS(FSTRING_EMPTY));
   print_STR(press_button_STR, 1);
   display_Update();
   wait();
@@ -204,78 +176,26 @@ void readROM_ARC() {
 // ROM SIZE
 //******************************************
 
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
+void printRomSize_ARC(int index) {
+    display_Clear();
+    print_Msg(FS(FSTRING_ROM_SIZE));
+    println_Msg(ARC[index]);
+}
+#endif
+
 void setROMSize_ARC() {
-#if (defined(enable_OLED) || defined(enable_LCD))
+  byte newarcsize;
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   if (arclo == archi)
     newarcsize = arclo;
   else {
-    int b = 0;
-    int i = arclo;
+    newarcsize = navigateMenu(arclo, archi, &printRomSize_ARC);
 
-    display_Clear();
-    print_Msg(F("ROM Size: "));
-    println_Msg(ARC[i]);
-    println_Msg(F(""));
-#if defined(enable_OLED)
-    print_STR(press_to_change_STR, 1);
-    print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-    print_STR(rotate_to_change_STR, 1);
-    print_STR(press_to_select_STR, 1);
-#endif
-    display_Update();
-
-    while (1) {
-      b = checkButton();
-      if (b == 2) {  // Previous (doubleclick)
-        if (i == arclo)
-          i = archi;
-        else
-          i--;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(ARC[i]);
-        println_Msg(F(""));
-#if defined(enable_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 1) {  // Next (press)
-        if (i == archi)
-          i = arclo;
-        else
-          i++;
-
-        // Only update display after input because of slow LCD library
-        display_Clear();
-        print_Msg(F("ROM Size: "));
-        println_Msg(ARC[i]);
-        println_Msg(F(""));
-#if defined(enable_OLED)
-        print_STR(press_to_change_STR, 1);
-        print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-        print_STR(rotate_to_change_STR, 1);
-        print_STR(press_to_select_STR, 1);
-#endif
-        display_Update();
-      }
-      if (b == 3) {  // Long Press - Execute (hold)
-        newarcsize = i;
-        break;
-      }
-    }
     display.setCursor(0, 56);  // Display selection at bottom
   }
-  print_Msg(F("ROM SIZE "));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ARC[newarcsize]);
   println_Msg(F("K"));
   display_Update();
@@ -300,7 +220,7 @@ setrom:
     newarcsize = sizeROM.toInt() + arclo;
     if (newarcsize > archi) {
       Serial.println(F("SIZE NOT SUPPORTED"));
-      Serial.println(F(""));
+      Serial.println(FS(FSTRING_EMPTY));
       goto setrom;
     }
   }
@@ -319,12 +239,12 @@ void checkStatus_ARC() {
     EEPROM_writeAnything(8, arcsize);
   }
 
-#if (defined(enable_OLED) || defined(enable_LCD))
+#if (defined(ENABLE_OLED) || defined(ENABLE_LCD))
   display_Clear();
   println_Msg(F("ARCADIA 2001 READER"));
-  println_Msg(F("CURRENT SETTINGS"));
-  println_Msg(F(""));
-  print_Msg(F("ROM SIZE: "));
+  println_Msg(FS(FSTRING_CURRENT_SETTINGS));
+  println_Msg(FS(FSTRING_EMPTY));
+  print_Msg(FS(FSTRING_ROM_SIZE));
   print_Msg(ARC[arcsize]);
   println_Msg(F("K"));
   display_Update();
@@ -333,246 +253,32 @@ void checkStatus_ARC() {
   Serial.print(F("CURRENT ROM SIZE: "));
   Serial.print(ARC[arcsize]);
   Serial.println(F("K"));
-  Serial.println(F(""));
+  Serial.println(FS(FSTRING_EMPTY));
 #endif
 }
 
 //******************************************
 // CART SELECT CODE
 //******************************************
-
-FsFile arccsvFile;
-char arcgame[20];                   // title
-char arcrr[3];                      // romsize
-char arcll[4];                      // linelength (previous line)
-unsigned long arccsvpos;            // CSV File Position
-char arccartCSV[] = "arccart.txt";  // CSV List
-char arccsvEND[] = "EOF";           // CSV End Marker for scrolling
-
-bool readLine_ARC(FsFile& f, char* line, size_t maxLen) {
-  for (size_t n = 0; n < maxLen; n++) {
-    int c = f.read();
-    if (c < 0 && n == 0) return false;  // EOF
-    if (c < 0 || c == '\n') {
-      line[n] = 0;
-      return true;
-    }
-    line[n] = c;
-  }
-  return false;  // line too long
-}
-
-bool readVals_ARC(char* arcgame, char* arcrr, char* arcll) {
-  char line[26];
-  arccsvpos = arccsvFile.position();
-  if (!readLine_ARC(arccsvFile, line, sizeof(line))) {
-    return false;  // EOF or too long
-  }
-  char* comma = strtok(line, ",");
-  int x = 0;
-  while (comma != NULL) {
-    if (x == 0)
-      strcpy(arcgame, comma);
-    else if (x == 1)
-      strcpy(arcrr, comma);
-    else if (x == 2)
-      strcpy(arcll, comma);
-    comma = strtok(NULL, ",");
-    x += 1;
-  }
-  return true;
-}
-
-bool getCartListInfo_ARC() {
-  bool buttonreleased = 0;
-  bool cartselected = 0;
-#if (defined(enable_OLED) || defined(enable_LCD))
-  display_Clear();
-  println_Msg(F(" HOLD TO FAST CYCLE"));
-  display_Update();
-#else
-  Serial.println(F("HOLD BUTTON TO FAST CYCLE"));
-#endif
-  delay(2000);
-#if defined(enable_OLED)
-  buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
-  boolean buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-  if (buttonVal1 == LOW) {  // Button Held - Fast Cycle
-    while (1) {             // Scroll Game List
-      while (readVals_ARC(arcgame, arcrr, arcll)) {
-        if (strcmp(arccsvEND, arcgame) == 0) {
-          arccsvFile.seek(0);  // Restart
-        } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
-          display_Clear();
-          println_Msg(F("CART TITLE:"));
-          println_Msg(F(""));
-          println_Msg(arcgame);
-          display_Update();
-#else
-          Serial.print(F("CART TITLE:"));
-          Serial.println(arcgame);
-#endif
-#if defined(enable_OLED)
-          buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
-          buttonVal1 = (PING & (1 << 2));  //PG2
-#endif
-          if (buttonVal1 == HIGH) {  // Button Released
-            buttonreleased = 1;
-            break;
-          }
-          if (buttonreleased) {
-            buttonreleased = 0;  // Reset Flag
-            break;
-          }
-        }
-      }
-#if defined(enable_OLED)
-      buttonVal1 = (PIND & (1 << 7));  // PD7
-#elif defined(enable_LCD)
-      buttonVal1 = (PING & (1 << 2));      //PG2
-#endif
-      if (buttonVal1 == HIGH)  // Button Released
-        break;
-    }
-  }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  display.setCursor(0, 56);
-  println_Msg(F("FAST CYCLE OFF"));
-  display_Update();
-#else
-  Serial.println(F(""));
-  Serial.println(F("FAST CYCLE OFF"));
-  Serial.println(F("PRESS BUTTON TO STEP FORWARD"));
-  Serial.println(F("DOUBLE CLICK TO STEP BACK"));
-  Serial.println(F("HOLD TO SELECT"));
-  Serial.println(F(""));
-#endif
-  while (readVals_ARC(arcgame, arcrr, arcll)) {
-    if (strcmp(arccsvEND, arcgame) == 0) {
-      arccsvFile.seek(0);  // Restart
-    } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
-      display_Clear();
-      println_Msg(F("CART TITLE:"));
-      println_Msg(F(""));
-      println_Msg(arcgame);
-      display.setCursor(0, 48);
-#if defined(enable_OLED)
-      print_STR(press_to_change_STR, 1);
-      print_STR(right_to_select_STR, 1);
-#elif defined(enable_LCD)
-      print_STR(rotate_to_change_STR, 1);
-      print_STR(press_to_select_STR, 1);
-#endif
-      display_Update();
-#else
-      Serial.print(F("CART TITLE:"));
-      Serial.println(arcgame);
-#endif
-      while (1) {  // Single Step
-        int b = checkButton();
-        if (b == 1) {  // Continue (press)
-          break;
-        }
-        if (b == 2) {  // Reset to Start of List (doubleclick)
-          byte prevline = strtol(arcll, NULL, 10);
-          arccsvpos -= prevline;
-          arccsvFile.seek(arccsvpos);
-          break;
-        }
-        if (b == 3) {  // Long Press - Select Cart (hold)
-          newarcsize = strtol(arcrr, NULL, 10);
-          EEPROM_writeAnything(8, newarcsize);
-          cartselected = 1;  // SELECTION MADE
-#if (defined(enable_OLED) || defined(enable_LCD))
-          println_Msg(F("SELECTION MADE"));
-          display_Update();
-#else
-          Serial.println(F("SELECTION MADE"));
-#endif
-          break;
-        }
-      }
-      if (cartselected) {
-        cartselected = 0;  // Reset Flag
-        return true;
-      }
-    }
-  }
-#if (defined(enable_OLED) || defined(enable_LCD))
-  println_Msg(F(""));
-  println_Msg(F("END OF FILE"));
-  display_Update();
-#else
-  Serial.println(F("END OF FILE"));
-#endif
-
-  return false;
-}
-
-void checkCSV_ARC() {
-  if (getCartListInfo_ARC()) {
-#if (defined(enable_OLED) || defined(enable_LCD))
-    display_Clear();
-    println_Msg(F("CART SELECTED"));
-    println_Msg(F(""));
-    println_Msg(arcgame);
-    display_Update();
-    // Display Settings
-    display.setCursor(0, 56);
-    print_Msg(F("CODE: R"));
-    println_Msg(newarcsize);
-    display_Update();
-#else
-    Serial.println(F(""));
-    Serial.println(F("CART SELECTED"));
-    Serial.println(arcgame);
-    // Display Settings
-    Serial.print(F("CODE: R"));
-    Serial.println(newarcsize);
-    Serial.println(F(""));
-#endif
-  } else {
-#if (defined(enable_OLED) || defined(enable_LCD))
-    display.setCursor(0, 56);
-    println_Msg(F("NO SELECTION"));
-    display_Update();
-#else
-    Serial.println(F("NO SELECTION"));
-#endif
-  }
-}
-
 void setCart_ARC() {
-#if (defined(enable_OLED) || defined(enable_LCD))
-  display_Clear();
-  println_Msg(arccartCSV);
-  display_Update();
-#endif
+  //go to root
   sd.chdir();
-  sprintf(folder, "ARC/CSV");
-  sd.chdir(folder);  // Switch Folder
-  arccsvFile = sd.open(arccartCSV, O_READ);
-  if (!arccsvFile) {
-#if (defined(enable_OLED) || defined(enable_LCD))
-    display_Clear();
-    println_Msg(F("CSV FILE NOT FOUND!"));
-    display_Update();
-#else
-    Serial.println(F("CSV FILE NOT FOUND!"));
-#endif
-    while (1) {
-      if (checkButton() != 0)
-        setup_ARC();
-    }
-  }
-  checkCSV_ARC();
 
-  arccsvFile.close();
+  byte gameSize;
+
+  // Select starting letter
+  //byte myLetter = starting_letter();
+
+  // Open database
+  if (myFile.open("arccart.txt", O_READ)) {
+    // seek_first_letter_in_database(myFile, myLetter);
+
+    if(checkCartSelection(myFile, &readDataLineSingleDigit, &gameSize)) {
+      EEPROM_writeAnything(8, gameSize);
+    }
+  } else {
+    print_FatalError(FS(FSTRING_DATABASE_FILE_NOT_FOUND));
+  }
 }
 #endif
 //******************************************

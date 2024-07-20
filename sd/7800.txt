@@ -1,0 +1,216 @@
+32 in 1
+0,3
+
+Ace of Aces
+1,4
+
+Alien Brigade
+2,5
+
+Asteroids
+0,0
+
+Atari 7800 Development Card
+0,0
+
+Attack of the Petscii Robots
+7,4
+
+Ballblazer
+0,1
+
+Barnyard Blaster
+1,4
+
+Baseball
+0,1
+
+Basketbrawl
+1,4
+
+Centipede
+0,0
+
+Choplifter! (Europe)
+0,2
+
+Choplifter! (USA)
+0,1
+
+Commando
+1,4
+
+Crack'ed
+1,4
+
+Crossbow
+2,5
+
+Danger Zone
+0,2
+
+Dark Chambers
+1,4
+
+Desert Falcon
+0,2
+
+Diagnostic Test Cartridge
+0,1
+
+Dig Dug (Europe)
+0,1
+
+Dig Dug (USA)
+0,0
+
+Donkey Kong
+0,2
+
+Donkey Kong Junior
+0,2
+
+Double Dragon
+4,4
+
+F-18 Hornet
+3,3
+
+Fatal Run
+1,4
+
+Fight Night
+1,4
+
+Food Fight (Europe)
+0,2
+
+Food Fight (USA)
+0,1
+
+Galaga (Europe)
+0,2
+
+Galaga (USA)
+0,1
+
+Hat Trick
+0,2
+
+Ikari Warriors
+1,4
+
+Impossible Mission
+1,4
+
+Jinks
+1,4
+
+Joust (Europe)
+0,2
+
+Joust (USA)
+0,1
+
+Karateka (Europe)
+6,3
+
+Karateka (USA)
+0,2
+
+Kung-Fu Master
+0,1
+
+Mario Bros.
+0,2
+
+Mat Mania Challenge
+1,4
+
+Mean 18 Ultimate Golf
+1,4
+
+Meltdown
+1,4
+
+Midnight Mutants
+1,4
+
+Motor Psycho
+1,4
+
+Ms. Pac-Man (Europe)
+0,1
+
+Ms. Pac-Man (USA)
+0,0
+
+Ninja Golf
+1,4
+
+One-on-One Basketball
+0,2
+
+Pete Rose Baseball
+0,1
+
+Planet Smashers
+1,4
+
+Pole Position II
+0,1
+
+Rampage
+4,4
+
+RealSports Baseball
+5,3
+
+Robotron 2084
+0,1
+
+Scrapyard Dog
+1,4
+
+Sentinel
+1,4
+
+Summer Games
+1,4
+
+Super Huey UH-IX
+0,2
+
+Super Skateboardin'
+0,1
+
+Tank Command
+5,3
+
+Title Match Pro Wrestling
+0,1
+
+Tomcat
+0,1
+
+Touchdown Football
+1,4
+
+Tower Toppler
+5,3
+
+Water Ski
+5,3
+
+Winter Games
+1,4
+
+Xenophobe
+1,4
+
+Xevious (Europe)
+0,2
+
+Xevious (USA)
+0,1
+
