@@ -29,7 +29,7 @@
     Choose your hardware version:
 */
 
-#define HW5
+//#define HW5
 //#define HW4
 //#define HW3
 //#define HW2
@@ -430,7 +430,7 @@
     other than HW5 and HW3.
 */
 
-//#define ENABLE_UPDATER
+#define ENABLE_UPDATER
 
 /****/
 
