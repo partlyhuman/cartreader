@@ -40,6 +40,7 @@
 // | 34 |- SWVCC
 // +----+
 //
+// Version 1.1
 // By @partlyhuman
 // This implementation would not be possible without the invaluable
 // documentation on
@@ -49,11 +50,6 @@
 // https://bitbucket.org/atarilynx/lynx/src/master/
 // by Karri Kaksonen (whitelynx.fi) and Igor as well as countless contributions
 // by the Atari Lynx community
-//
-// Version 1.1
-// Future enhancements
-// 1. EEPROM read/write
-// 2. Homebrew flash cart programming
 //
 #ifdef ENABLE_LYNX
 
