@@ -248,7 +248,6 @@ void waitForDataComplement_LYNX(uint8_t expected) {
   dataDir_LYNX(INPUT);
   uint8_t status;
   do {
-    delayMicroseconds(1);
     digitalWrite(LYNX_OE, LOW);
     // one nop = 62.5ns
     // tOE = 30-50ns depending on flash
