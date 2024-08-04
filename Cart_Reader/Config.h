@@ -29,7 +29,7 @@
     Choose your hardware version:
 */
 
-//#define HW5
+#define HW5
 //#define HW4
 //#define HW3
 //#define HW2
@@ -53,7 +53,7 @@
     automatically be enabled if you selected HW2 or newer above.
 */
 
-//#define ENABLE_CLOCKGEN
+#define ENABLE_CLOCKGEN
 
 /****/
 
@@ -92,7 +92,7 @@
 /* [ Atari LYNX --------------------------------------------------- ]
 */
 
-//#define ENABLE_LYNX
+#define ENABLE_LYNX
 
 /****/
 
@@ -212,14 +212,14 @@
 /* [ Nintendo 64 -------------------------------------------------- ]
 */
 
-#define ENABLE_N64
+//#define ENABLE_N64
 
 /****/
 
 /* [ Nintendo Entertainment System/Family Computer ---------------- ]
 */
 
-#define ENABLE_NES
+//#define ENABLE_NES
 
 /****/
 
@@ -240,7 +240,7 @@
 /* [ PC Engine/TurboGrafx 16 -------------------------------------- ]
 */
 
-//#define ENABLE_PCE
+// #define ENABLE_PCE
 
 /****/
 
@@ -261,21 +261,21 @@
 /* [ Sega Master System/Mark III/Game Gear/SG-1000 ---------------- ]
 */
 
-#define ENABLE_SMS
+//#define ENABLE_SMS
 
 /****/
 
 /* [ Sega Mega Drive/Genesis -------------------------------------- ]
 */
 
-#define ENABLE_MD
+//#define ENABLE_MD
 
 /****/
 
 /* [ Super Famicom SF Memory Cassette ----------------------------- ]
 */
 
-#define ENABLE_SFM
+//#define ENABLE_SFM
 
 /****/
 
@@ -331,7 +331,7 @@
 /* [ Vectrex ------------------------------------------------------ ]
 */
 
-//#define ENABLE_VECTREX
+// #define ENABLE_VECTREX
 
 /****/
 
@@ -373,7 +373,7 @@
 /* [ Casio Loopy -------------------------------------------------- ]
 */
 
-//#define ENABLE_LOOPY
+// #define ENABLE_LOOPY
 
 /****/
 
@@ -390,7 +390,7 @@
     Filename: config.txt
 */
 
-//#define ENABLE_CONFIG
+#define ENABLE_CONFIG
 
 /****/
 

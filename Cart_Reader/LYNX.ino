@@ -123,7 +123,7 @@ static bool waitPressButton_LYNX(bool ret = false) {
 
 #pragma region HIGHLEVEL
 
-static void compareStride(uint8_t b, int i, int stride) {
+static void compareStride_LYNX(uint8_t b, int i, int stride) {
   uint8_t other = readByte_LYNX(i + stride);
   if (other == 0xff) {
     // If this is a flash cart, these in-between spaces should be formatted to all 1's
@@ -159,9 +159,9 @@ static bool detectCart_LYNX() {
     }
     // Identify mirroring of largest stride
     // Valid cart sizes of 128kb, 256kb, 512kb / 256 blocks = block sizes of 512b, 1024b, 2048b
-    compareStride(b, i, 256);
-    compareStride(b, i, 512);
-    compareStride(b, i, 1024);
+    compareStride_LYNX(b, i, 256);
+    compareStride_LYNX(b, i, 512);
+    compareStride_LYNX(b, i, 1024);
   }
 
   if (lynxBlockSize == 0) {
